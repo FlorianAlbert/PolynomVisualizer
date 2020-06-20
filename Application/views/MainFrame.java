@@ -35,8 +35,11 @@ public class MainFrame extends JFrame {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		GraphPanel panel = new GraphPanel(-1,5,-3,7);
+		panel.setBounds(10, 11, 418, 244);
+		contentPane.add(panel);
 	}
-
 }
