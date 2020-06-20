@@ -6,6 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 
 /**
  * @author Florian Albert
@@ -28,13 +31,17 @@ public class GraphPanel extends JPanel {
 	private double yMax;
 
 	/**
-	 * Create the panel.
+	 * Create the panel
 	 */
 	public GraphPanel() {
 		xMin = -10;
 		xMax = 10;
 		yMin = -10;
 		yMax = 10;
+		
+		Border border = getBorder();
+		Border margin = new LineBorder(Color.black, 1);
+		setBorder(new CompoundBorder(border, margin));
 	}
 	
 	public GraphPanel(double xMin, double xMax, double yMin, double yMax) {
@@ -42,6 +49,10 @@ public class GraphPanel extends JPanel {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
+		
+		Border border = getBorder();
+		Border margin = new LineBorder(Color.black, 1);
+		setBorder(new CompoundBorder(border, margin));
 	}
 	
 	@Override
@@ -52,8 +63,6 @@ public class GraphPanel extends JPanel {
 		
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.black);
-		
-		g2d.draw(new Rectangle2D.Double(0, 0, panelWidth, panelHeight));
 	}
 	
 	@Override
