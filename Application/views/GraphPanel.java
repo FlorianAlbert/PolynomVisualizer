@@ -3,6 +3,10 @@ package views;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -23,10 +27,14 @@ public class GraphPanel extends JPanel {
 	
 	private CoordinateSystem coordinateSystem;
 	
-	private double xMin;
-	private double xMax;
-	private double yMin;
-	private double yMax;
+	private int xMin;
+	private int xMax;
+	private int yMin;
+	private int yMax;
+	
+	private String[] functions = new String[10];
+	
+	private ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 
 	/**
 	 * Create the panel
@@ -42,7 +50,7 @@ public class GraphPanel extends JPanel {
 		setBorder(new CompoundBorder(border, margin));
 	}
 	
-	public GraphPanel(double xMin, double xMax, double yMin, double yMax) {
+	public GraphPanel(int xMin, int xMax, int yMin, int yMax) {
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -59,8 +67,7 @@ public class GraphPanel extends JPanel {
 		
 		coordinateSystem.paint(g);
 		
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.black);
+		paintFunctions(g);
 	}
 	
 	@Override
@@ -71,5 +78,34 @@ public class GraphPanel extends JPanel {
 		panelWidth = width;
 		
 		coordinateSystem = new CoordinateSystem(panelWidth, panelHeight, xMin, xMax, yMin, yMax);
+	}
+	
+	public void setFunctions(String[] functions) {
+		this.functions = functions;
+		
+		repaint();
+	}
+	
+	private void paintFunctions(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setColor(Color.black);
+		
+		int[] values = new int[panelWidth];
+		double difference = (double) (xMax - xMin) / panelWidth;
+		for (String function: functions) {
+			if (function != null) {
+				for (int i = 0; i < panelWidth; i++) {
+					try {
+						values[i] = (int) Math.round(panelHeight * ((double) (engine.eval(function.replace("x", Double.toString(xMin + i * difference)))) - yMin) / (yMax - yMin));
+					} catch (ScriptException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				for (int i = 0; i < panelWidth - 1; i++) {
+					g2d.drawLine(i, panelHeight - values[i], i+1, panelHeight - values[i+1]);
+				}
+			}
+		}
 	}
 }
