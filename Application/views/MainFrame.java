@@ -1,5 +1,6 @@
 package views;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -41,8 +42,12 @@ public class MainFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		GraphPanel panel = new GraphPanel(-1,5,-3,7);
+		GraphPanel panel = new GraphPanel(-5,3,-30,30);
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
+		
+		panel.setFunctions(new String[] {
+				"x*x"
+		});
 	}
 }
