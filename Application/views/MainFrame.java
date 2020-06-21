@@ -6,6 +6,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainFrame extends JFrame {
 
@@ -36,7 +39,7 @@ public class MainFrame extends JFrame {
 	 */
 	public MainFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 451, 337);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -46,8 +49,24 @@ public class MainFrame extends JFrame {
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
 		
-		panel.setFunctions(new String[] {
-				"x*x"
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel.setFunctions(new String[] {
+						"x*x",
+						"x*x*x+20",
+						"x*x*x+15",
+						"x*x*x+10",
+						"x*x*x+5",
+						"x*x*x",
+						"x*x*x-5",
+						"x*x*x-10",
+						"x*x*x-15",
+						"x*x*x-20",
+				});
+			}
 		});
+		btnRefresh.setBounds(10, 269, 89, 23);
+		contentPane.add(btnRefresh);
 	}
 }
