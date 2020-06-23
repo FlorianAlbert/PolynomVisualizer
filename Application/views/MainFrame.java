@@ -1,6 +1,5 @@
 package views;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -44,26 +43,16 @@ public class MainFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		GraphPanel panel = new GraphPanel(-5,3,-30,30);
+
+		GraphPanel panel = new GraphPanel(-10, 10, -1, 8);
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
-		
+
 		JButton btnRefresh = new JButton("Refresh");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panel.setFunctions(new String[] {
-						"x*x",
-						"x*x*x+20",
-						"x*x*x+15",
-						"x*x*x+10",
-						"x*x*x+5",
-						"x*x*x",
-						"x*x*x-5",
-						"x*x*x-10",
-						"x*x*x-15",
-						"x*x*x-20",
-				});
+				panel.setFunctions(new String[] { "x*x*x", "x*x+1", "x*x+2", "x*x+3", "x*x+4", "x*x-1", "x*x-2", "x*x-3",
+						"x*x-4", "x*x-5" });
 			}
 		});
 		btnRefresh.setBounds(10, 269, 89, 23);
