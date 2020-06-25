@@ -4,13 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+
+import service.Calculator;
 
 /**
  * @author Florian Albert
@@ -35,7 +34,7 @@ public class GraphPanel extends JPanel implements Runnable {
 	private String[] functions = new String[10];
 	private volatile int[][] values;
 
-	private ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+	private Calculator calculator = new Calculator();
 
 	Thread calculatingThread;
 
@@ -94,7 +93,7 @@ public class GraphPanel extends JPanel implements Runnable {
 		}
 	}
 
-	private void paintFunctions(Graphics g) {
+	private synchronized void paintFunctions(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.black);
 
@@ -110,15 +109,10 @@ public class GraphPanel extends JPanel implements Runnable {
 	private void evaluateFunctions() {
 		double difference = (double) (xMax - xMin) / panelWidth;
 		for (int i = 0; i < functions.length; i++) {
-			if (functions[i] != null) {
+			if (calculator.setTerm(functions[i])) {
 				for (int j = 0; j < panelWidth; j++) {
-					try {
-						values[i][j] = (int) Math.round(panelHeight * ((double) (engine
-								.eval(functions[i].replace("x", Double.toString(xMin + j * difference)))) - yMin)
-								/ (yMax - yMin));
-					} catch (ScriptException e) {
-						e.printStackTrace();
-					}
+					values[i][j] = (int) Math
+							.round(panelHeight * (calculator.calculate(xMin + j * difference) - yMin) / (yMax - yMin));
 				}
 			}
 		}
