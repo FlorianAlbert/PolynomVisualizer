@@ -3,8 +3,6 @@ package views;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class CoordinateSystem {
 	private int xMin;

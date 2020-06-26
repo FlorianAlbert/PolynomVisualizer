@@ -41,7 +41,6 @@ public class GraphPanel extends JPanel implements Runnable {
 
     private Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK, Color.CYAN, Color.MAGENTA, Color.ORANGE,
 	    Color.GRAY, Color.PINK, Color.YELLOW };
-    private int functionsCounter = 0;
 
     private Calculator calculator = new Calculator();
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4,8,10,TimeUnit.SECONDS,new ArrayBlockingQueue<Runnable>(4));
@@ -122,7 +121,7 @@ public class GraphPanel extends JPanel implements Runnable {
 			if (calculator.setTerm(functions[i])) {
 				for (int j = 0; j < panelWidth; j++) {
 					values[i][j] = (int) Math
-							.round(panelHeight * (calculator.calculate(xMin + j * difference) - yMin) / (yMax - yMin));
+							.round(panelHeight * (calculator.calculateValue(xMin + j * difference) - yMin) / (yMax - yMin));
 				}
 			}
 		}
