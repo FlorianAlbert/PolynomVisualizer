@@ -44,11 +44,7 @@ public class MainFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-<<<<<<< HEAD
 		GraphPanel panel = new GraphPanel(-10, 10, -10, 10);
-=======
-		GraphPanel panel = new GraphPanel(-2, 2, -10, 10);
->>>>>>> branch 'master' of https://github.com/FlorianAlbert/PolynomVisualizer.git
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
 
