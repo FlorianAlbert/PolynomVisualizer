@@ -44,14 +44,14 @@ public class MainFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		GraphPanel panel = new GraphPanel(-10, 25, -17, 20);
+		GraphPanel panel = new GraphPanel(-2, 2, -10, 10);
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
 
 		JButton btnRefresh = new JButton("Refresh");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panel.setFunctions(new String[] { "-0.25x^+3+2x^2", "0.5x^3", "x^3", "-x^3", "-0.5x^3", "-0.25x^3", "x^3+1", "x^3+2", "x^3-1", "x^3-2"});
+				panel.setFunctions(new String[] { "-x^+3"});
 			}
 		});
 		btnRefresh.setBounds(10, 269, 89, 23);

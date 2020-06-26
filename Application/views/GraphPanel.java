@@ -112,7 +112,7 @@ public class GraphPanel extends JPanel implements Executor, Runnable {
 			if (calculator.setTerm(functions[i])) {
 				for (int j = 0; j < panelWidth; j++) {
 					values[i][j] = (int) Math
-							.round(panelHeight * (calculator.calculate(xMin + j * difference) - yMin) / (yMax - yMin));
+							.round(panelHeight * (calculator.calculateValue(xMin + j * difference) - yMin) / (yMax - yMin));
 				}
 			}
 		}
