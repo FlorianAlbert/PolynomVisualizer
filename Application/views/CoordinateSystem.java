@@ -3,6 +3,8 @@ package views;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class CoordinateSystem {
 	private int xMin;
@@ -34,7 +36,6 @@ public class CoordinateSystem {
 
 			for (int i = 1; i < xMax - xMin; i++) {
 				int x = width * i / (xMax - xMin);
-				
 				drawXNumber(g, i, x, y, height);
 			}
 		}
@@ -44,7 +45,8 @@ public class CoordinateSystem {
 			g2d.drawLine(x, 0, x, height);
 
 			for (int i = 1; i < yMax - yMin; i++) {
-				g2d.drawLine(x - 3, height * i / (yMax - yMin), x + 3, height * i / (yMax - yMin));
+				int y = height * i / (yMax - yMin);
+				drawYNumber(g, i, x, y, height);
 			}
 		}
 	}
@@ -67,5 +69,26 @@ public class CoordinateSystem {
 				g2d.drawString(Integer.toString(counter + xMin), x - middleDifference, y + 10 + heightDifference);
 			}
 		}
+	}
+	
+	public void drawYNumber(Graphics g, int counter, int x, int y, int height) {
+	    Graphics2D g2d = (Graphics2D) g;
+	    g2d.setColor(Color.black);
+	    
+	    g2d.drawLine(x-3, y, x+3, y);
+	    
+	    int middleDifference = g2d.getFontMetrics().stringWidth(Integer.toString((counter + yMin)* -1)) / 2;
+	    double spaceLeft = ((double)xMin * -1) / (double)xMax; 	    
+	    
+	    int help = (yMax - yMin - 1) / 6 + 1;
+	    
+	    if(counter % help == 0 && counter + yMin != 0) {
+		if(spaceLeft >= 0.1) {
+		    g2d.drawString(Integer.toString((counter + yMin) * -1), x - middleDifference - 12, y + g2d.getFontMetrics().getDescent());
+		}
+		else {
+		    g2d.drawString(Integer.toString((counter + yMin) * -1) , x - middleDifference + 12, y + g2d.getFontMetrics().getDescent());
+		}
+	    }
 	}
 }
