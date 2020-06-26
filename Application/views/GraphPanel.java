@@ -40,8 +40,6 @@ public class GraphPanel extends JPanel implements Runnable {
 	private volatile int[][] values;
 
 	private Calculator calculator = new Calculator();
-	Thread calculatingThread;
-
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4,8,10,TimeUnit.SECONDS,new ArrayBlockingQueue<Runnable>(4));
 
 	/**
