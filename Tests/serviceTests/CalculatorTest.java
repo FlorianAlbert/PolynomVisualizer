@@ -10,6 +10,10 @@ public class CalculatorTest {
 	@Test
 	public void testCheckTerm() {
 		Calculator calc = new Calculator();
-		Assert.assertTrue(calc.checkTerm("x^-3"));
+		calc.setTerm("-3.5x+x^2");
+		for (int i = 0; i <= 100; i++) {
+			System.out.println(calc.calculateValue(i) + " = " + (-3.5*Math.pow(i, 1)+Math.pow(i, 2)));
+			Assert.assertTrue(calc.calculateValue(i) == -3.5*Math.pow(i, 1)+Math.pow(i, 2));
+		}
 	}
 }
