@@ -42,13 +42,14 @@ public class GraphPanel extends JPanel implements Runnable {
 			Color.GRAY, Color.PINK, Color.YELLOW };
 
 	private Calculator calculator = new Calculator();
-	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
 
-	Thread calculatingThread;
+	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
+	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
 
 	/**
 	 * Create the panel
 	 */
+
 	public GraphPanel() {
 		xMin = -10;
 		xMax = 10;
