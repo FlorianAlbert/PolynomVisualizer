@@ -15,7 +15,6 @@ import javax.swing.border.LineBorder;
 
 import service.Calculator;
 
-
 /**
  * @author Florian Albert
  * 
@@ -25,115 +24,115 @@ import service.Calculator;
 
 public class GraphPanel extends JPanel implements Runnable {
 
-    private static final long serialVersionUID = -4286522701957270175L;
-    private int panelHeight;
-    private int panelWidth;
+	private static final long serialVersionUID = -4286522701957270175L;
+	private int panelHeight;
+	private int panelWidth;
 
-    private CoordinateSystem coordinateSystem;
+	private CoordinateSystem coordinateSystem;
 
-    private int xMin;
-    private int xMax;
-    private int yMin;
-    private int yMax;
+	private int xMin;
+	private int xMax;
+	private int yMin;
+	private int yMax;
 
-    private String[] functions = new String[10];
-    private volatile int[][] values;
+	private String[] functions = new String[10];
+	private volatile int[][] values;
 
-    private Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK, Color.CYAN, Color.MAGENTA, Color.ORANGE,
-	    Color.GRAY, Color.PINK, Color.YELLOW };
+	private Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK, Color.CYAN, Color.MAGENTA, Color.ORANGE,
+			Color.GRAY, Color.PINK, Color.YELLOW };
 
-    private Calculator calculator = new Calculator();
-	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4,8,10,TimeUnit.SECONDS,new ArrayBlockingQueue<Runnable>(4));
+	private Calculator calculator = new Calculator();
 
-    Thread calculatingThread;
+	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
+	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
 
-    /**
-     * Create the panel
-     */
-    public GraphPanel() {
-	xMin = -10;
-	xMax = 10;
-	yMin = -10;
-	yMax = 10;
+	/**
+	 * Create the panel
+	 */
 
-	Border border = getBorder();
-	Border margin = new LineBorder(Color.black, 1);
-	setBorder(new CompoundBorder(border, margin));
-    }
+	public GraphPanel() {
+		xMin = -10;
+		xMax = 10;
+		yMin = -10;
+		yMax = 10;
 
-    public GraphPanel(int xMin, int xMax, int yMin, int yMax) {
-	this.xMin = xMin;
-	this.xMax = xMax;
-	this.yMin = yMin;
-	this.yMax = yMax;
+		Border border = getBorder();
+		Border margin = new LineBorder(Color.black, 1);
+		setBorder(new CompoundBorder(border, margin));
+	}
 
-	Border border = getBorder();
-	Border margin = new LineBorder(Color.black, 1);
-	setBorder(new CompoundBorder(border, margin));
-    }
+	public GraphPanel(int xMin, int xMax, int yMin, int yMax) {
+		this.xMin = xMin;
+		this.xMax = xMax;
+		this.yMin = yMin;
+		this.yMax = yMax;
 
-    @Override
-    protected synchronized void paintComponent(Graphics g) {
-	super.paintComponent(g);
+		Border border = getBorder();
+		Border margin = new LineBorder(Color.black, 1);
+		setBorder(new CompoundBorder(border, margin));
+	}
 
-	coordinateSystem.paint(g);
+	@Override
+	protected synchronized void paintComponent(Graphics g) {
+		super.paintComponent(g);
 
-	paintFunctions(g);
-    }
+		coordinateSystem.paint(g);
 
-    @Override
-    public void setBounds(int x, int y, int width, int height) {
-	super.setBounds(x, y, width, height);
+		paintFunctions(g);
+	}
 
-	panelHeight = height;
-	panelWidth = width;
+	@Override
+	public void setBounds(int x, int y, int width, int height) {
+		super.setBounds(x, y, width, height);
 
-	coordinateSystem = new CoordinateSystem(panelWidth, panelHeight, xMin, xMax, yMin, yMax);
-	values = new int[10][panelWidth];
-    }
+		panelHeight = height;
+		panelWidth = width;
 
-	
-    public void setFunctions(String[] functions) {
-	if (functions.length <= 10) {
-	    this.functions = functions;
-			
+		coordinateSystem = new CoordinateSystem(panelWidth, panelHeight, xMin, xMax, yMin, yMax);
+		values = new int[10][panelWidth];
+	}
+
+	public void setFunctions(String[] functions) {
+		if (functions.length <= 10) {
+			this.functions = functions;
+
 			tPool.execute(this);
 
-	}
-    }
-
-    private synchronized void paintFunctions(Graphics g) {
-	Graphics2D g2d = (Graphics2D) g;
-
-	for (int i = 0; i < functions.length; i++) {
-	    g2d.setColor(colors[i]);
-	    if (functions[i] != null) {
-		for (int j = 0; j < panelWidth - 1; j++) {
-		    g2d.drawLine(j, panelHeight - values[i][j], j + 1, panelHeight - values[i][j + 1]);
 		}
-	    }
 	}
-    }
 
-   private void evaluateFunctions() {
+	private synchronized void paintFunctions(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+
+		for (int i = 0; i < functions.length; i++) {
+			g2d.setColor(colors[i]);
+			if (functions[i] != null) {
+				for (int j = 0; j < panelWidth - 1; j++) {
+					g2d.drawLine(j, panelHeight - values[i][j], j + 1, panelHeight - values[i][j + 1]);
+				}
+			}
+		}
+	}
+
+	private void evaluateFunctions() {
 		double difference = (double) (xMax - xMin) / panelWidth;
 		for (int i = 0; i < functions.length; i++) {
 			if (calculator.setTerm(functions[i])) {
 				for (int j = 0; j < panelWidth; j++) {
-					values[i][j] = (int) Math
-							.round(panelHeight * (calculator.calculateValue(xMin + j * difference) - yMin) / (yMax - yMin));
+					values[i][j] = (int) Math.round(
+							panelHeight * (calculator.calculateValue(xMin + j * difference) - yMin) / (yMax - yMin));
 				}
 			}
 		}
-	    }
-
-    @Override
-    public void run() {
-	synchronized (this) {
-	    evaluateFunctions();
 	}
 
-	repaint();
-    }
+	@Override
+	public void run() {
+		synchronized (this) {
+			evaluateFunctions();
+		}
+
+		repaint();
+	}
 
 }
