@@ -3,8 +3,10 @@ package views;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ArrayBlockingQueue;
+
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -13,14 +15,15 @@ import javax.swing.border.LineBorder;
 
 import service.Calculator;
 
+
 /**
  * @author Florian Albert
  * 
- * @version 0.1
+ * @version 0.2
  * 
  */
 
-public class GraphPanel extends JPanel implements Executor, Runnable {
+public class GraphPanel extends JPanel implements Runnable {
 
 	private static final long serialVersionUID = -4286522701957270175L;
 	private int panelHeight;
@@ -37,8 +40,9 @@ public class GraphPanel extends JPanel implements Executor, Runnable {
 	private volatile int[][] values;
 
 	private Calculator calculator = new Calculator();
-	public ThreadPool threadPool = new ThreadPool();
-	private ThreadPoolExecutor executor;
+	Thread calculatingThread;
+
+	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4,8,10,TimeUnit.SECONDS,new ArrayBlockingQueue<Runnable>(4));
 
 	/**
 	 * Create the panel
@@ -85,11 +89,13 @@ public class GraphPanel extends JPanel implements Executor, Runnable {
 		values = new int[10][panelWidth];
 	}
 
+	
 	public void setFunctions(String[] functions) {
 		if (functions.length <= 10) {
 			this.functions = functions;
+			
+			tPool.execute(this);
 
-			executor.execute(this);
 		}
 	}
 
@@ -120,16 +126,6 @@ public class GraphPanel extends JPanel implements Executor, Runnable {
 
 	@Override
 	public void run() {
-		synchronized (this) {
-			evaluateFunctions();
-		}
-
-		repaint();
-	}
-
-	@Override
-	public void execute(Runnable command) {
-		// TODO Auto-generated method stub
 		synchronized (this) {
 			evaluateFunctions();
 		}
