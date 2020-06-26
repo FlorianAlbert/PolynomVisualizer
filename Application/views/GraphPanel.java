@@ -3,6 +3,8 @@ package views;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -18,7 +20,7 @@ import service.Calculator;
  * 
  */
 
-public class GraphPanel extends JPanel implements Runnable {
+public class GraphPanel extends JPanel implements Executor, Runnable {
 
 	private static final long serialVersionUID = -4286522701957270175L;
 	private int panelHeight;
@@ -35,8 +37,8 @@ public class GraphPanel extends JPanel implements Runnable {
 	private volatile int[][] values;
 
 	private Calculator calculator = new Calculator();
-
-	Thread calculatingThread;
+	public ThreadPool threadPool = new ThreadPool();
+	private ThreadPoolExecutor executor;
 
 	/**
 	 * Create the panel
@@ -87,9 +89,7 @@ public class GraphPanel extends JPanel implements Runnable {
 		if (functions.length <= 10) {
 			this.functions = functions;
 
-			calculatingThread = new Thread(this);
-
-			calculatingThread.start();
+			executor.execute(this);
 		}
 	}
 
@@ -126,4 +126,15 @@ public class GraphPanel extends JPanel implements Runnable {
 
 		repaint();
 	}
+
+	@Override
+	public void execute(Runnable command) {
+		// TODO Auto-generated method stub
+		synchronized (this) {
+			evaluateFunctions();
+		}
+
+		repaint();
+	}
+
 }
