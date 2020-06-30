@@ -51,7 +51,7 @@ public class MainFrame extends JFrame {
 		JButton btnRefresh = new JButton("Refresh");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panel.setFunctions(new String[] { "-x^+3", "x^2"});
+				panel.setFunctions(new String[] {"x^2", "x^2-0.2", "x^2+0.2", "x^2-0.4", "-x^+3", "x^2+0.4", "x^2-0.6", "x^2+0.6", "x^2-0.8", "x^2+0.8"});
 			}
 		});
 		btnRefresh.setBounds(10, 269, 89, 23);
