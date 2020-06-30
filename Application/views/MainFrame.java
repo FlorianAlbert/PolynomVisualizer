@@ -5,11 +5,15 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import service.ValueChangedListener;
+import viewModels.MainFrameViewModel;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements ValueChangedListener {
 
 	/**
 	 * 
@@ -37,6 +41,9 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame() {
+		MainFrameViewModel viewModel = new MainFrameViewModel();
+		viewModel.addValueChangedListener(this);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 451, 337);
 		contentPane = new JPanel();
@@ -56,5 +63,10 @@ public class MainFrame extends JFrame {
 		});
 		btnRefresh.setBounds(10, 269, 89, 23);
 		contentPane.add(btnRefresh);
+	}
+
+	@Override
+	public void onValueChanged() {
+		
 	}
 }

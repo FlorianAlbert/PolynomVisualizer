@@ -1,5 +1,7 @@
 package viewModels;
 
-public class MainFrameViewModel {
+import service.SuperViewModel;
 
+public class MainFrameViewModel extends SuperViewModel {
+	
 }
