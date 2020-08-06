@@ -79,12 +79,15 @@ public class GraphPanel extends JPanel implements Runnable {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				double scale = e.getPreciseWheelRotation() * 0.1;
-				double oldYMax = GraphPanel.this.yMax;
-				double oldXMin = GraphPanel.this.xMin;
-				GraphPanel.this.xMin -= scale * (pixelToX(e.getX()) - oldXMin);
-				GraphPanel.this.xMax += scale * (pixelToX(panelWidth - e.getX()) - oldXMin);
-				GraphPanel.this.yMin += scale * (pixelToY(panelHeight - e.getY()) - oldYMax);
-				GraphPanel.this.yMax -= scale * (pixelToY(e.getY()) - oldYMax);
+				double diff = (GraphPanel.this.xMax - GraphPanel.this.xMin) * scale;
+				double xMinDiff = diff * ((pixelToX(e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
+				double xMaxDiff = diff * ((pixelToX(panelWidth - e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
+				double yMinDiff = diff * ((pixelToY(panelHeight - e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
+				double yMaxDiff = diff * ((pixelToY(e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
+				GraphPanel.this.xMin -= xMinDiff;
+				GraphPanel.this.xMax += xMaxDiff;
+				GraphPanel.this.yMin += yMinDiff;
+				GraphPanel.this.yMax -= yMaxDiff;
 
 				coordinateSystem = new CoordinateSystem(panelWidth, panelHeight, GraphPanel.this.xMin,
 						GraphPanel.this.xMax, GraphPanel.this.yMin, GraphPanel.this.yMax);

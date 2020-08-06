@@ -39,7 +39,7 @@ public class MainFrame extends JFrame{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		GraphPanel panel = new GraphPanel(-5, 5, -2, 2);
+		GraphPanel panel = new GraphPanel(-5, 5, -5, 5);
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
 
