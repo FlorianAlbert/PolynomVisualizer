@@ -1,5 +1,7 @@
 package model;
 
-public class Model {
+import service.SuperModel;
+
+public class Model extends SuperModel {
 
 }

@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import controller.MainFrameController;
+import model.Model;
 import service.ValueChangedListener;
 
 public class MainFrame extends JFrame implements ValueChangedListener{
@@ -35,8 +36,10 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 	}
 	
 	public MainFrame() {
-		MainFrameController viewModel = new MainFrameController();
-		viewModel.addValueChangedListener(this);
+		Model model = new Model();
+		model.addValueChangedListener(this);
+		
+		MainFrameController controller = new MainFrameController(model);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 451, 337);

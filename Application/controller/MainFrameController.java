@@ -1,7 +1,10 @@
 package controller;
 
-import service.SuperController;
+import model.Model;
 
-public class MainFrameController extends SuperController {
+public class MainFrameController {
+	public MainFrameController(Model model) {
+		
+	}
 	
 }
