@@ -1,29 +1,22 @@
 package views;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import service.ValueChangedListener;
-import viewModels.MainFrameViewModel;
-
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-public class MainFrame extends JFrame implements ValueChangedListener {
-
+public class MainFrame extends JFrame{
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5394447692344610358L;
+	private static final long serialVersionUID = -2853729456871453019L;
 	private JPanel contentPane;
-
-	/**
-	 * Launch the application.
-	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -35,11 +28,9 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 				}
 			}
 		});
+		
 	}
-
-	/**
-	 * Create the frame.
-	 */
+	
 	public MainFrame() {
 		MainFrameViewModel viewModel = new MainFrameViewModel();
 		viewModel.addValueChangedListener(this);
@@ -51,7 +42,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		GraphPanel panel = new GraphPanel(-2, 2, -2, 2);
+		GraphPanel panel = new GraphPanel(-5, 5, -5, 5);
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
 
@@ -62,11 +53,5 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 			}
 		});
 		btnRefresh.setBounds(10, 269, 89, 23);
-		contentPane.add(btnRefresh);
+		contentPane.add(btnRefresh);		
 	}
-
-	@Override
-	public void onValueChanged() {
-		
-	}
-}

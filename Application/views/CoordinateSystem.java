@@ -5,15 +5,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 public class CoordinateSystem {
-	private int xMin;
-	private int xMax;
-	private int yMin;
-	private int yMax;
+
+	private double xMin;
+	private double xMax;
+	private double yMin;
+	private double yMax;
 
 	private int width;
 	private int height;
 
-	public CoordinateSystem(int width, int height, int xMin, int xMax, int yMin, int yMax) {
+	public CoordinateSystem(int width, int height, double xMin, double xMax, double yMin, double yMax) {
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -24,69 +25,85 @@ public class CoordinateSystem {
 	}
 
 	public void paint(Graphics g) {
+
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.black);
 
-		if (yMax > 0 && yMin < 0) {
-			int y = (height * yMax / (yMax - yMin));
+		int xAxisY = yToPixel(0.0);
+		int yAxisX = xToPixel(0.0);
 
-			g2d.drawLine(0, y, width, y);
+		drawXNumbers(g2d, xAxisY);
 
-			for (int i = 1; i < xMax - xMin; i++) {
-				int x = width * i / (xMax - xMin);
-				drawXNumber(g, i, x, y, height);
-			}
-		}
+		drawYNumbers(g2d, yAxisX);
 
-		if (xMax > 0 && xMin < 0) {
-			int x = width * Math.abs(xMin) / (xMax - xMin);
-			g2d.drawLine(x, 0, x, height);
+		g2d.setColor(Color.BLACK); // Y- and X-Axis
+		g2d.drawLine(0, xAxisY, width, xAxisY);
+		g2d.drawLine(yAxisX, 0, yAxisX, height);
+		g2d.drawString("x", 0, xAxisY - 10);
+		g2d.drawString("y", yAxisX - 10, 0);
 
-			for (int i = 1; i < yMax - yMin; i++) {
-				int y = height * i / (yMax - yMin);
-				drawYNumber(g, i, x, y, height);
-			}
-		}
 	}
 
-	public void drawXNumber(Graphics g, int counter, int x, int y, int height) {
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.black);
+	private int xToPixel(double x) { // calculates the x-position in the Coord-System
+		return (int) ((x - xMin) / (xMax - xMin) * width);
+	}
 
-		g2d.drawLine(x, y - 3, x, y + 3);
+	private int yToPixel(double y) {
+		return height - (int) ((y - yMin) / (yMax - yMin) * height); // evtl +yMax
+	}
 
-		int middleDifference = g2d.getFontMetrics().stringWidth(Integer.toString(counter + xMin)) / 2;
+	private void drawXNumbers(Graphics2D g2d, int xAxisY) {
+		int yneg = xAxisY + 3; // vertical Lines
+		int ypos = xAxisY - 3;
+
+		int help = (int) ((yMax - yMin) / 6 + 1);
+		
 		int heightDifference = g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent();
 
-		int help = (xMax - xMin - 1) / 6 + 1;
+		for (int i = (int) (Math.floor(xMin) + 1); i < xMax; i++) {
 
-		if (counter % help == 0 && counter + xMin != 0) {
-			if (y >= height - heightDifference - 15) {
-				g2d.drawString(Integer.toString(counter + xMin), x - middleDifference, y - 10);
-			} else {
-				g2d.drawString(Integer.toString(counter + xMin), x - middleDifference, y + 10 + heightDifference);
+			if (i % help == 0 && i != 0) {
+				int x = xToPixel(i);
+
+				int middleDifference = g2d.getFontMetrics().stringWidth(Integer.toString(i)) / 2;
+
+				g2d.setColor(Color.LIGHT_GRAY);
+				g2d.drawLine(x, 0, x, height);
+				g2d.setColor(Color.BLACK);
+				g2d.drawLine(x, yneg, x, ypos);
+
+				if (xAxisY >= height - heightDifference - 15) {
+					g2d.drawString(Integer.toString(i), x - middleDifference, xAxisY - 10);
+				} else {
+					g2d.drawString(Integer.toString(i), x - middleDifference, xAxisY + 10 + heightDifference);
+				}
 			}
 		}
 	}
-	
-	public void drawYNumber(Graphics g, int counter, int x, int y, int height) {
-	    Graphics2D g2d = (Graphics2D) g;
-	    g2d.setColor(Color.black);
-	    
-	    g2d.drawLine(x-3, y, x+3, y);
-	    
-	    int middleDifference = g2d.getFontMetrics().stringWidth(Integer.toString((counter + yMin)* -1)) / 2;
-	    double spaceLeft = ((double)xMin * -1) / (double)xMax; 	    
-	    
-	    int help = (yMax - yMin - 1) / 6 + 1;
-	    
-	    if(counter % help == 0 && counter + yMin != 0) {
-		if(spaceLeft >= 0.1) {
-		    g2d.drawString(Integer.toString((counter + yMin) * -1), x - middleDifference - 12, y + g2d.getFontMetrics().getDescent());
+
+	private void drawYNumbers(Graphics2D g2d, int yAxisX) {
+		int xneg = yAxisX - 3; // horizontal Lines
+		int xpos = yAxisX + 3;
+
+		int help = (int) ((yMax - yMin) / 6 + 1);
+
+		for (int i = (int) (Math.floor(yMin) + 1); i < yMax; i++) {
+
+			if (i % help == 0 && i != 0) {
+
+				int y = yToPixel(i);
+				int lengthDifference = g2d.getFontMetrics().stringWidth(Integer.toString(i));
+				
+				g2d.setColor(Color.LIGHT_GRAY);
+				g2d.drawLine(0, y, width, y);
+				g2d.setColor(Color.BLACK);
+				g2d.drawLine(xneg, y, xpos, y);
+				
+				if (yAxisX - 2 * lengthDifference - 10 > 0) {
+					g2d.drawString(Integer.toString(i), yAxisX - lengthDifference - 12, y + g2d.getFontMetrics().getDescent());
+				} else {
+					g2d.drawString(Integer.toString(i), yAxisX - lengthDifference + 12, y + g2d.getFontMetrics().getDescent());
+				}
+			}
 		}
-		else {
-		    g2d.drawString(Integer.toString((counter + yMin) * -1) , x - middleDifference + 12, y + g2d.getFontMetrics().getDescent());
-		}
-	    }
 	}
 }
