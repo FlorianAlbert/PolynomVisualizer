@@ -11,8 +11,8 @@ public class CoordinateSystem {
 	private double yMin;
 	private double yMax;
 
-	private int width;
-	private int height;
+	private int panelWidth;
+	private int panelHeight;
 
 	public CoordinateSystem(int width, int height, double xMin, double xMax, double yMin, double yMax) {
 		this.xMin = xMin;
@@ -20,8 +20,8 @@ public class CoordinateSystem {
 		this.yMin = yMin;
 		this.yMax = yMax;
 
-		this.width = width;
-		this.height = height;
+		this.panelWidth = width;
+		this.panelHeight = height;
 	}
 
 	public void paint(Graphics g) {
@@ -36,19 +36,17 @@ public class CoordinateSystem {
 		drawYNumbers(g2d, yAxisX);
 
 		g2d.setColor(Color.BLACK); // Y- and X-Axis
-		g2d.drawLine(0, xAxisY, width, xAxisY);
-		g2d.drawLine(yAxisX, 0, yAxisX, height);
-		g2d.drawString("x", 0, xAxisY - 10);
-		g2d.drawString("y", yAxisX - 10, 0);
+		g2d.drawLine(0, xAxisY, panelWidth, xAxisY);
+		g2d.drawLine(yAxisX, 0, yAxisX, panelHeight);
 
 	}
 
 	private int xToPixel(double x) { // calculates the x-position in the Coord-System
-		return (int) ((x - xMin) / (xMax - xMin) * width);
+		return (int) ((x - xMin) / (xMax - xMin) * panelWidth);
 	}
 
 	private int yToPixel(double y) {
-		return height - (int) ((y - yMin) / (yMax - yMin) * height); // evtl +yMax
+		return panelHeight - (int) ((y - yMin) / (yMax - yMin) * panelHeight);
 	}
 
 	private void drawXNumbers(Graphics2D g2d, int xAxisY) {
@@ -56,7 +54,7 @@ public class CoordinateSystem {
 		int ypos = xAxisY - 3;
 
 		int help = (int) ((yMax - yMin) / 6 + 1);
-		
+
 		int heightDifference = g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent();
 
 		for (int i = (int) (Math.floor(xMin) + 1); i < xMax; i++) {
@@ -67,14 +65,22 @@ public class CoordinateSystem {
 				int middleDifference = g2d.getFontMetrics().stringWidth(Integer.toString(i)) / 2;
 
 				g2d.setColor(Color.LIGHT_GRAY);
-				g2d.drawLine(x, 0, x, height);
+				g2d.drawLine(x, 0, x, panelHeight);
 				g2d.setColor(Color.BLACK);
 				g2d.drawLine(x, yneg, x, ypos);
 
-				if (xAxisY >= height - heightDifference - 15) {
-					g2d.drawString(Integer.toString(i), x - middleDifference, xAxisY - 10);
+				if (xAxisY >= panelHeight - heightDifference - 15) {
+					if (xAxisY >= panelHeight) {
+						g2d.drawString(Integer.toString(i), x - middleDifference, panelHeight - 10);
+					} else {
+						g2d.drawString(Integer.toString(i), x - middleDifference, xAxisY - 10);
+					}
 				} else {
-					g2d.drawString(Integer.toString(i), x - middleDifference, xAxisY + 10 + heightDifference);
+					if (xAxisY >= 0) {
+						g2d.drawString(Integer.toString(i), x - middleDifference, xAxisY + 10 + heightDifference);
+					} else {
+						g2d.drawString(Integer.toString(i), x - middleDifference, 10 + heightDifference);
+					}
 				}
 			}
 		}
@@ -92,16 +98,26 @@ public class CoordinateSystem {
 
 				int y = yToPixel(i);
 				int lengthDifference = g2d.getFontMetrics().stringWidth(Integer.toString(i));
-				
+
 				g2d.setColor(Color.LIGHT_GRAY);
-				g2d.drawLine(0, y, width, y);
+				g2d.drawLine(0, y, panelWidth, y);
 				g2d.setColor(Color.BLACK);
 				g2d.drawLine(xneg, y, xpos, y);
-				
+
 				if (yAxisX - 2 * lengthDifference - 10 > 0) {
-					g2d.drawString(Integer.toString(i), yAxisX - lengthDifference - 12, y + g2d.getFontMetrics().getDescent());
+					if (yAxisX <= panelWidth) {
+						g2d.drawString(Integer.toString(i), yAxisX - lengthDifference - 12,
+								y + g2d.getFontMetrics().getDescent());
+					} else {
+						g2d.drawString(Integer.toString(i), panelWidth - lengthDifference - 12,
+								y + g2d.getFontMetrics().getDescent());
+					}
 				} else {
-					g2d.drawString(Integer.toString(i), yAxisX + 12, y + g2d.getFontMetrics().getDescent());
+					if (yAxisX >= 0) {
+						g2d.drawString(Integer.toString(i), yAxisX + 12, y + g2d.getFontMetrics().getDescent());
+					} else {
+						g2d.drawString(Integer.toString(i), 12, y + g2d.getFontMetrics().getDescent());
+					}
 				}
 			}
 		}
