@@ -9,8 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import controller.MainFrameController;
 import service.ValueChangedListener;
-import viewModels.MainFrameViewModel;
 
 public class MainFrame extends JFrame implements ValueChangedListener{
 	
@@ -35,7 +35,7 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 	}
 	
 	public MainFrame() {
-		MainFrameViewModel viewModel = new MainFrameViewModel();
+		MainFrameController viewModel = new MainFrameController();
 		viewModel.addValueChangedListener(this);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

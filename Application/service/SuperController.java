@@ -2,7 +2,7 @@ package service;
 
 import java.util.ArrayList;
 
-public class SuperViewModel {
+public class SuperController {
 	ArrayList<ValueChangedListener> listener = new ArrayList<>();
 	
 	public void addValueChangedListener(ValueChangedListener listener) {
