@@ -1,16 +1,21 @@
 package views;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 public class MainFrame extends JFrame{
 	
-	JFrame frame = new JFrame("Polynom Grapher");
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2853729456871453019L;
+	private JPanel contentPane;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -27,37 +32,25 @@ public class MainFrame extends JFrame{
 	}
 	
 	public MainFrame() {
-		setLayout(new BorderLayout());
-		
-		centerPanel();
-		leftPanel();
-		bottomPanel();
-		
-		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		pack();
-		setLocationRelativeTo(null);
-		
-		
-		
-	}
-	
-	public void centerPanel() {
-		CoordinateSystem cs = new CoordinateSystem();
-		add(cs, BorderLayout.CENTER);
-		cs.setFunctions(new String[] {"x^2", "x^2-0.2", "x^2+0.2", "x^3+x^2", "-x^+3", "x^6-3", "x^5", "x^2+0.6", "-x^2-5", "x^2+0.8"});
-		new Thread(cs).start();
-	}
-	
-	public void leftPanel() {
-		JPanel leftP = new JPanel();
-		leftP.setPreferredSize(new Dimension(250, 768));
-		add(leftP, BorderLayout.WEST);
-	}
-	
-	public void bottomPanel() {
-		JTextField textbox = new JTextField();
-		add(textbox, BorderLayout.SOUTH);
+		setBounds(100, 100, 451, 337);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		GraphPanel panel = new GraphPanel(-5, 5, -2, 2);
+		panel.setBounds(10, 11, 418, 244);
+		contentPane.add(panel);
+
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel.setFunctions(new String[] {"x^2", "x^2-0.2", "x^2+0.2", "x^2-0.4", "-x^+3", "x^2+0.4", "x^2-0.6", "x^2+0.6", "x^2-0.8", "x^2+0.8"});
+			}
+		});
+		btnRefresh.setBounds(10, 269, 89, 23);
+		contentPane.add(btnRefresh);		
 	}
 
 }
