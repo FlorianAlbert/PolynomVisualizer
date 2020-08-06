@@ -9,7 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class MainFrame extends JFrame{
+import service.ValueChangedListener;
+import viewModels.MainFrameViewModel;
+
+public class MainFrame extends JFrame implements ValueChangedListener{
 	
 	/**
 	 * 
@@ -55,3 +58,10 @@ public class MainFrame extends JFrame{
 		btnRefresh.setBounds(10, 269, 89, 23);
 		contentPane.add(btnRefresh);		
 	}
+
+	@Override
+	public void onValueChanged() {
+		// TODO Auto-generated method stub
+		
+	}
+}

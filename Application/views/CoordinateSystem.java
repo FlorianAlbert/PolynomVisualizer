@@ -101,7 +101,7 @@ public class CoordinateSystem {
 				if (yAxisX - 2 * lengthDifference - 10 > 0) {
 					g2d.drawString(Integer.toString(i), yAxisX - lengthDifference - 12, y + g2d.getFontMetrics().getDescent());
 				} else {
-					g2d.drawString(Integer.toString(i), yAxisX - lengthDifference + 12, y + g2d.getFontMetrics().getDescent());
+					g2d.drawString(Integer.toString(i), yAxisX + 12, y + g2d.getFontMetrics().getDescent());
 				}
 			}
 		}

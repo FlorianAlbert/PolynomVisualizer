@@ -2,6 +2,7 @@ package views;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -78,7 +79,7 @@ public class GraphPanel extends JPanel implements Runnable {
 		this.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				double scale = e.getPreciseWheelRotation() * 0.1;
+				double scale = e.getPreciseWheelRotation() * 0.05;
 				double diff = (GraphPanel.this.xMax - GraphPanel.this.xMin) * scale;
 				double xMinDiff = diff * ((pixelToX(e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
 				double xMaxDiff = diff * ((pixelToX(panelWidth - e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
@@ -96,10 +97,15 @@ public class GraphPanel extends JPanel implements Runnable {
 			}
 		});
 
-		this.addMouseListener(new MouseAdapter() {
+		this.addMouseListener(new MouseAdapter() {			
 			@Override
 			public void mousePressed(MouseEvent e) { // gets the position of the mouse when clicked
 				mousePressingPoint = e.getPoint();
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				GraphPanel.this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 			}
 		});
 
