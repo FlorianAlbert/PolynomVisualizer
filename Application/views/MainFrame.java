@@ -32,6 +32,9 @@ public class MainFrame extends JFrame{
 	}
 	
 	public MainFrame() {
+		MainFrameViewModel viewModel = new MainFrameViewModel();
+		viewModel.addValueChangedListener(this);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 451, 337);
 		contentPane = new JPanel();
@@ -52,5 +55,3 @@ public class MainFrame extends JFrame{
 		btnRefresh.setBounds(10, 269, 89, 23);
 		contentPane.add(btnRefresh);		
 	}
-
-}
