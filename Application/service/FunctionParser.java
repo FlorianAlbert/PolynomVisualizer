@@ -150,7 +150,7 @@ public class FunctionParser {
 
 	public boolean checkTerm(String term) {
 		boolean termIsValid = term
-				.matches("[+-]?(\\d+(.\\d+)?)?([xX](\\^\\+?\\d+)?)?([+-](\\d+(.\\d+)?)?([xX](\\^\\+?\\d+)?)?)*");
+				.matches("[+-]?\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^[+-]?\\d+)?))|((?<=\\d)(([xX](\\^[+-]?\\d+)?)?)))([+-]\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^[+-]?\\d+)?))|((?<=\\d)(([xX](\\^[+-]?\\d+)?)?))))*");
 
 		return termIsValid;
 	}
