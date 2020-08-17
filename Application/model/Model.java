@@ -1,13 +1,17 @@
 package model;
 
+import service.Calculator;
 import service.SuperModel;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-public class Model extends SuperModel {
+public class Model extends SuperModel implements Runnable {
 
     public double xMin;
 	public double xMax;
@@ -20,13 +24,12 @@ public class Model extends SuperModel {
 	public ArrayList<Integer> xNumberList = new ArrayList<>();
 	public ArrayList<Integer> yNumberList = new ArrayList<>();
     
-    public int xToPixel(double x) { // calculates the x-position in the Coord-System
-		return (int) ((x - xMin) / (xMax - xMin) * panelWidth);
-	}
+	private Calculator calculator = new Calculator();
 
-    public int yToPixel(double y) {
-		return panelHeight - (int) ((y - yMin) / (yMax - yMin) * panelHeight);
-	}
+	public String[] functions = new String[10];
+
+	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
+	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
 
     private void drawXNumbers(Graphics2D g2d, int xAxisY) {
 		int yneg = xAxisY + 3; // vertical Lines
@@ -105,6 +108,55 @@ public class Model extends SuperModel {
 				//  }
 			}
 		}
+	}
+
+	public void setFunctions(String[] functions) {
+		if (functions.length <= 10) {
+			this.functions = functions;
+
+			tPool.execute(this);
+
+		}
+	}
+
+	public int[][] evaluateFunctions(String[] functions) {
+		int[][] values = new int[functions.length][panelWidth];
+		double difference = (double) (xMax - xMin) / panelWidth;
+		for (int i = 0; i < functions.length; i++) {
+			if (functions[i] != null) {
+				if (calculator.setTerm(functions[i])) {
+					for (int j = 0; j < panelWidth; j++) {
+						values[i][j] = (int) yToPixel(calculator.calculateValue(xMin + j * difference));
+						return values;
+					}
+				}
+			}
+		}
+		return values;
+	}
+
+	public double pixelToX(int pixelX) { // calculates corresponding x-value of a pixel
+		return xMin + pixelX * (xMax - xMin) / panelWidth;
+	}
+
+	public double pixelToY(int pixelY) { // calculates corresponding y-value of a pixel
+		return yMax - pixelY * (yMax - yMin) / panelHeight; // (panelHeight - pixelY) / panelHeight * (yMax - yMin) +
+															// yMax;
+
+	}
+
+	public int xToPixel(double x) { // calculates the x-position in the Coord-System
+		return (int) ((x - xMin) / (xMax - xMin) * panelWidth);
+	}
+
+	public int yToPixel(double y) {
+		return panelHeight - (int) ((y - yMin) / (yMax - yMin) * panelHeight); // evtl +yMax
+	}
+
+	@Override
+	public void run() {
+	    // TODO Auto-generated method stub
+	    
 	}
 
 }

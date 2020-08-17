@@ -7,8 +7,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -23,6 +26,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 
+import model.Model;
 import service.Calculator;
 
 /**
@@ -32,13 +36,14 @@ import service.Calculator;
  * 
  */
 
-public class GraphPanel extends JPanel implements Runnable {
+public class GraphPanel extends JPanel implements Runnable, ActionListener{
 
 	private static final long serialVersionUID = -4286522701957270175L;
 	private int panelHeight;
 	private int panelWidth;
 
 	private CoordinateSystem coordinateSystem;
+	private Model model;
 
 	private double xMin;
 	private double xMax;
@@ -62,11 +67,11 @@ public class GraphPanel extends JPanel implements Runnable {
 	 * Create the GraphPanel
 	 */
 
-	public GraphPanel() {
-		this(-10, 10, -10, 10);
-	}
+	// public GraphPanel() {
+	// 	this(-10, 10, -10, 10, );
+	// }
 
-	public GraphPanel(double xMin, double xMax, double yMin, double yMax) {
+	public GraphPanel(double xMin, double xMax, double yMin, double yMax, Model model) {
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -81,29 +86,26 @@ public class GraphPanel extends JPanel implements Runnable {
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				double scale = e.getPreciseWheelRotation() * 0.05;
 				double diff = (GraphPanel.this.xMax - GraphPanel.this.xMin) * scale;
-				double xMinDiff = diff * ((pixelToX(e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
-				double xMaxDiff = diff * ((pixelToX(panelWidth - e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
-				double yMinDiff = diff * ((pixelToY(panelHeight - e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
-				double yMaxDiff = diff * ((pixelToY(e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
+				double xMinDiff = diff * (((e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
+				double xMaxDiff = diff * ((model.pixelToX(panelWidth - e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
+				double yMinDiff = diff * ((model.pixelToY(panelHeight - e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
+				double yMaxDiff = diff * ((model.pixelToY(e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
 				GraphPanel.this.xMin -= xMinDiff;
 				GraphPanel.this.xMax += xMaxDiff;
 				GraphPanel.this.yMin += yMinDiff;
 				GraphPanel.this.yMax -= yMaxDiff;
 
-				coordinateSystem = new CoordinateSystem(panelWidth, panelHeight, GraphPanel.this.xMin,
-						GraphPanel.this.xMax, GraphPanel.this.yMin, GraphPanel.this.yMax);
+				coordinateSystem = new CoordinateSystem(model);
 
 				tPool.execute(GraphPanel.this);
 			}
 		});
 
-		this.addMouseListener(new MouseAdapter() {			
-			@Override
+		this.addMouseListener((MouseListener) new MouseAdapter() {			
 			public void mousePressed(MouseEvent e) { // gets the position of the mouse when clicked
 				mousePressingPoint = e.getPoint();
 			}
 			
-			@Override
 			public void mouseEntered(MouseEvent e) {
 				GraphPanel.this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 			}
@@ -115,8 +117,8 @@ public class GraphPanel extends JPanel implements Runnable {
 				int xDifference = mousePressingPoint.x - e.getX();
 				int yDifference = mousePressingPoint.y - e.getY();
 
-				double x = pixelToX(xDifference) - GraphPanel.this.xMin;
-				double y = pixelToY(yDifference) - GraphPanel.this.yMax;
+				double x = model.pixelToX(xDifference) - GraphPanel.this.xMin;
+				double y = model.pixelToY(yDifference) - GraphPanel.this.yMax;
 				GraphPanel.this.xMin += x;
 				GraphPanel.this.xMax += x;
 				GraphPanel.this.yMin += y;
@@ -124,8 +126,7 @@ public class GraphPanel extends JPanel implements Runnable {
 
 				mousePressingPoint = e.getPoint();
 
-				coordinateSystem = new CoordinateSystem(panelWidth, panelHeight, GraphPanel.this.xMin,
-						GraphPanel.this.xMax, GraphPanel.this.yMin, GraphPanel.this.yMax);
+				coordinateSystem = new CoordinateSystem(model);
 
 				tPool.execute(GraphPanel.this);
 			}
@@ -148,18 +149,18 @@ public class GraphPanel extends JPanel implements Runnable {
 		panelHeight = height;
 		panelWidth = width;
 
-		coordinateSystem = new CoordinateSystem(panelWidth, panelHeight, xMin, xMax, yMin, yMax);
+		coordinateSystem = new CoordinateSystem(model);
 		values = new int[10][panelWidth];
 	}
 
-	public void setFunctions(String[] functions) {
-		if (functions.length <= 10) {
-			this.functions = functions;
+	// public void setFunctions(String[] functions) {
+	// 	if (functions.length <= 10) {
+	// 		this.functions = functions;
 
-			tPool.execute(this);
+	// 		tPool.execute(this);
 
-		}
-	}
+	// 	}
+	// }
 
 	private void paintFunctions(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
@@ -182,43 +183,29 @@ public class GraphPanel extends JPanel implements Runnable {
 		}
 	}
 
-	private void evaluateFunctions() {
-		double difference = (double) (xMax - xMin) / panelWidth;
-		for (int i = 0; i < functions.length; i++) {
-			if (functions[i] != null) {
-				if (calculator.setTerm(functions[i])) {
-					for (int j = 0; j < panelWidth; j++) {
-						values[i][j] = (int) yToPixel(calculator.calculateValue(xMin + j * difference));
-					}
-				}
-			}
-		}
-	}
+	// private void evaluateFunctions() {
+	// 	double difference = (double) (xMax - xMin) / panelWidth;
+	// 	for (int i = 0; i < functions.length; i++) {
+	// 		if (functions[i] != null) {
+	// 			if (calculator.setTerm(functions[i])) {
+	// 				for (int j = 0; j < panelWidth; j++) {
+	// 					values[i][j] = (int) yToPixel(calculator.calculateValue(xMin + j * difference));
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	@Override
 	public void run() {
 		synchronized (this) {
-			evaluateFunctions();
+			values = model.evaluateFunctions(functions);
 		}
 
 		repaint();
 	}
 
-	private double pixelToX(int pixelX) { // calculates corresponding x-value of a pixel
-		return xMin + pixelX * (xMax - xMin) / panelWidth;
-	}
-
-	private double pixelToY(int pixelY) { // calculates corresponding y-value of a pixel
-		return yMax - pixelY * (yMax - yMin) / panelHeight; // (panelHeight - pixelY) / panelHeight * (yMax - yMin) +
-															// yMax;
-
-	}
-
-	private int xToPixel(double x) { // calculates the x-position in the Coord-System
-		return (int) ((x - xMin) / (xMax - xMin) * panelWidth);
-	}
-
-	private int yToPixel(double y) {
-		return panelHeight - (int) ((y - yMin) / (yMax - yMin) * panelHeight); // evtl +yMax
+	public void actionPerformed(ActionEvent e) {
+		functions = model.functions;
 	}
 }

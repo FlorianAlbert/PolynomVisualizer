@@ -11,7 +11,7 @@ public class CoordinateSystem {
 	private Model model;
 
 
-	public CoordinateSystem(int width, int height, double xMin, double xMax, double yMin, double yMax, Model m) {
+	public CoordinateSystem(Model m) {
 		//  this.xMin = xMin;
 		//  this.xMax = xMax;
 		//  this.yMin = yMin;
