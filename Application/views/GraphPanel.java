@@ -26,8 +26,9 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 
-import model.Model;
+import model.GraphPanelModel;
 import service.Calculator;
+import service.ValueChangedListener;
 
 /**
  * @author Florian Albert
@@ -36,14 +37,14 @@ import service.Calculator;
  * 
  */
 
-public class GraphPanel extends JPanel implements Runnable, ActionListener{
+public class GraphPanel extends JPanel implements Runnable, ValueChangedListener{
 
 	private static final long serialVersionUID = -4286522701957270175L;
 	private int panelHeight;
 	private int panelWidth;
 
 	private CoordinateSystem coordinateSystem;
-	private Model model;
+	private GraphPanelModel model;
 
 	private double xMin;
 	private double xMax;
@@ -71,7 +72,7 @@ public class GraphPanel extends JPanel implements Runnable, ActionListener{
 	// 	this(-10, 10, -10, 10, );
 	// }
 
-	public GraphPanel(double xMin, double xMax, double yMin, double yMax, Model model) {
+	public GraphPanel(double xMin, double xMax, double yMin, double yMax, GraphPanelModel model) {
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -205,7 +206,8 @@ public class GraphPanel extends JPanel implements Runnable, ActionListener{
 		repaint();
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		functions = model.functions;
+	@Override
+	public void onValueChanged() {
+	    
 	}
 }
