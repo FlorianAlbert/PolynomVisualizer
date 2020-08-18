@@ -3,15 +3,15 @@ package views;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import model.Model;
+import model.GraphPanelModel;
 import java.util.ArrayList;
 
 public class CoordinateSystem {
 	
-	private Model model;
+	private GraphPanelModel model;
 
 
-	public CoordinateSystem(Model m) {
+	public CoordinateSystem(GraphPanelModel m) {
 		//  this.xMin = xMin;
 		//  this.xMax = xMax;
 		//  this.yMin = yMin;

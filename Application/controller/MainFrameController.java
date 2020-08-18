@@ -1,9 +1,9 @@
 package controller;
 
-import model.Model;
+import model.GraphPanelModel;
 
 public class MainFrameController {
-	public MainFrameController(Model model) {
+	public MainFrameController(GraphPanelModel model) {
 		
 	}
 	

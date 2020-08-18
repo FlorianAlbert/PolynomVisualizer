@@ -11,7 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class Model extends SuperModel implements Runnable {
+public class GraphPanelModel extends SuperModel implements Runnable {
 
     public double xMin;
 	public double xMax;

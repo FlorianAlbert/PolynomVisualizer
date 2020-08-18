@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import controller.MainFrameController;
-import model.Model;
+import model.GraphPanelModel;
 import service.ValueChangedListener;
 
 public class MainFrame extends JFrame implements ValueChangedListener{
@@ -36,7 +36,7 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 	}
 	
 	public MainFrame() {
-		Model model = new Model();
+		GraphPanelModel model = new GraphPanelModel();
 		model.addValueChangedListener(this);
 		
 		MainFrameController controller = new MainFrameController(model);
