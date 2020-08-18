@@ -26,6 +26,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 
+import controller.GraphPanelController;
 import model.GraphPanelModel;
 import service.Calculator;
 import service.ValueChangedListener;
@@ -81,6 +82,10 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		Border border = getBorder();
 		Border margin = new LineBorder(Color.black, 1);
 		setBorder(new CompoundBorder(border, margin));
+		
+		GraphPanelController controller = new GraphPanelController(model);
+		
+		this.addMouseWheelListener(controller);
 
 		this.addMouseWheelListener(new MouseWheelListener() {
 			@Override
@@ -151,6 +156,7 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		panelWidth = width;
 
 		coordinateSystem = new CoordinateSystem(model);
+		model.addValueChangedListener(coordinateSystem);
 		values = new int[10][panelWidth];
 	}
 
@@ -208,6 +214,7 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 
 	@Override
 	public void onValueChanged() {
-	    
+
+		tPool.execute(GraphPanel.this);
 	}
 }

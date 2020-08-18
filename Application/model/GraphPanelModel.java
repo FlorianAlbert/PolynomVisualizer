@@ -2,10 +2,12 @@ package model;
 
 import service.Calculator;
 import service.SuperModel;
+import views.GraphPanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -27,6 +29,8 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	private Calculator calculator = new Calculator();
 
 	public String[] functions = new String[10];
+	
+	private Point mousePressingPoint;
 
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
@@ -158,5 +162,47 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	    // TODO Auto-generated method stub
 	    
 	}
+	
+	public void setXYUnits(double xMin, double xMax, double yMin, double yMax) {
+		setxMin(xMin);
+		setxMax(xMax);
+		setyMin(yMin);
+		setyMax(yMax);
+		
+		ValueChanged();
+	}
+	
+	public void setxMin(double xMin) {
+		this.xMin = xMin;
+	}
 
+	public void setxMax(double xMax) {
+		this.xMax = xMax;
+	}
+	public void setyMin(double yMin) {
+		this.yMin = yMin;
+	}
+	public void setyMax(double yMax) {
+		this.yMax = yMax;
+	}
+	
+	public void setMousePressingPoint(Point point) {
+		mousePressingPoint = point;
+	}
+	
+	public void calculateXYAfterMoving(Point newPoint) {
+		int xDifference = mousePressingPoint.x - newPoint.x;
+		int yDifference = mousePressingPoint.y - newPoint.y;
+
+		double x = pixelToX(xDifference) - xMin;
+		double y = pixelToY(yDifference) - yMax;
+		xMin += x;
+		xMax += x;
+		yMin += y;
+		yMax += y;
+
+		//mousePressingPoint = e.getPoint();
+		
+		ValueChanged();
+	}
 }

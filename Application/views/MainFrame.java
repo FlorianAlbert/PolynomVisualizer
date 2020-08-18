@@ -49,6 +49,7 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 		contentPane.setLayout(null);
 
 		GraphPanel panel = new GraphPanel(-5, 5, -5, 5, model);
+		model.addValueChangedListener(panel);
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
 

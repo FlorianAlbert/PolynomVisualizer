@@ -4,14 +4,16 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import model.GraphPanelModel;
+import service.ValueChangedListener;
+
 import java.util.ArrayList;
 
-public class CoordinateSystem {
+public class CoordinateSystem implements ValueChangedListener {
 	
 	private GraphPanelModel model;
 
 
-	public CoordinateSystem(GraphPanelModel m) {
+	public CoordinateSystem(GraphPanelModel m)  {
 		//  this.xMin = xMin;
 		//  this.xMax = xMax;
 		//  this.yMin = yMin;
@@ -78,5 +80,11 @@ public class CoordinateSystem {
 
 	public void drawNumber(Graphics g, int number, int x, int y){
 		g.drawString( Integer.toString(number), x, y);
+	}
+
+	@Override
+	public void onValueChanged() {
+		// TODO Auto-generated method stub
+		
 	}
 }
