@@ -80,10 +80,4 @@ public class CoordinateSystem implements ValueChangedListener {
 	public void drawNumber(Graphics g, int number, int x, int y){
 		g.drawString( Integer.toString(number), x, y);
 	}
-
-	@Override
-	public void onValueChanged() {
-		// TODO Auto-generated method stub
-		
-	}
 }
