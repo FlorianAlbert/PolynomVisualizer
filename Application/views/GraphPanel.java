@@ -63,18 +63,16 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 	// 	this(-10, 10, -10, 10, );
 	// }
 
-	public GraphPanel(double xMin, double xMax, double yMin, double yMax, GraphPanelModel model) {
-		this.xMin = xMin;
-		this.xMax = xMax;
-		this.yMin = yMin;
-		this.yMax = yMax;
-
+	public GraphPanel(GraphPanelModel model) {
 		Border border = getBorder();
 		Border margin = new LineBorder(Color.black, 1);
 		setBorder(new CompoundBorder(border, margin));
 		
 		this.model = model;
 		GraphPanelController controller = new GraphPanelController(model);
+		
+		coordinateSystem = new CoordinateSystem(this.model);
+		model.addValueChangedListener(coordinateSystem);
 		
 		this.addMouseWheelListener(controller);
 		this.addMouseListener(controller);
@@ -145,12 +143,8 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
 
-		panelHeight = height;
-		panelWidth = width;
-
-		coordinateSystem = new CoordinateSystem(model);
-		model.addValueChangedListener(coordinateSystem);
-		values = new int[10][panelWidth];
+		model.setPanelWidth(width);
+		model.setPanelHeight(height);
 	}
 
 	private void paintFunctions(Graphics g) {
@@ -159,14 +153,14 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
 
-		for (int i = 0; i < functions.length; i++) {
+		for (int i = 0; i < model.getFunctions().length; i++) {
 			g2d.setColor(colors[i]);
-			if (functions[i] != null) {
+			if (model.getFunctions()[i] != null) {
 				Path2D path = new Path2D.Double();
 
-				path.moveTo(0, values[i][0]);
-				for (int j = 1; j < panelWidth; j++) {
-					path.lineTo(j, values[i][j]);
+				path.moveTo(0, model.getFunctionValues()[i][0]);
+				for (int j = 1; j < model.getPanelWidth(); j++) {
+					path.lineTo(j, model.getFunctionValues()[i][j]);
 				}
 
 				g2d.draw(path);
