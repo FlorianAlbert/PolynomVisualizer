@@ -2,6 +2,7 @@ package views;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -184,7 +185,7 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 
 	@Override
 	public void onValueChanged() {
-
-		tPool.execute(GraphPanel.this);
+		repaint();
+		setCursor(new Cursor(model.getCursorType()));
 	}
 }

@@ -31,6 +31,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	public String[] functions = new String[10];
 	
 	private Point mousePressingPoint;
+	private int cursorType;
 
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
@@ -220,8 +221,13 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 		ValueChanged();
 	}
+	
+	public int getCursorType() {
+		return cursorType;
+	}
 
-	public void setCursor(Cursor cursor) {
-		this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
+	public void setCursorType(int cursorType) {
+		this.cursorType = cursorType;
+		ValueChanged();
 	}
 }

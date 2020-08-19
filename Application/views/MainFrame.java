@@ -37,7 +37,6 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 	
 	public MainFrame() {
 		GraphPanelModel model = new GraphPanelModel();
-		model.addValueChangedListener(this);
 		
 		MainFrameController controller = new MainFrameController(model);
 		
