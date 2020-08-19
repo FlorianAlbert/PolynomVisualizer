@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -32,7 +33,7 @@ public class GraphPanelController implements MouseListener, MouseWheelListener, 
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		
+		model.calculateXYAfterWheel(e);
 	}
 
 	@Override
@@ -52,14 +53,19 @@ public class GraphPanelController implements MouseListener, MouseWheelListener, 
 		
 	}
 
+	public void mouseEntered(Cursor e) {
+		// TODO Auto-generated method stub
+		model.setCursor(e);
+	}
+
 	@Override
-	public void mouseEntered(MouseEvent e) {
+	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
+	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}

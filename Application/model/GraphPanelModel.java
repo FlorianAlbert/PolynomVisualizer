@@ -2,12 +2,12 @@ package model;
 
 import service.Calculator;
 import service.SuperModel;
-import views.GraphPanel;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -204,5 +204,24 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		//mousePressingPoint = e.getPoint();
 		
 		ValueChanged();
+	}
+
+	public void calculateXYAfterWheel(MouseWheelEvent e) {
+		double scale = e.getPreciseWheelRotation() * 0.05;
+		double diff = (this.xMax - this.xMin) * scale;
+		double xMinDiff = diff * ((pixelToX(e.getX()) - this.xMin) / (this.xMax - this.xMin));
+		double xMaxDiff = diff * ((pixelToX(panelWidth - e.getX()) - this.xMin) / (this.xMax - this.xMin));
+		double yMinDiff = diff * ((pixelToY(panelHeight - e.getY()) - this.yMax) / (this.yMax - this.yMin));
+		double yMaxDiff = diff * ((pixelToY(e.getY()) - this.yMax) / (this.yMax - this.yMin));
+		this.xMin -= xMinDiff;
+		this.xMax += xMaxDiff;
+		this.yMin += yMinDiff;
+		this.yMax -= yMaxDiff;
+
+		ValueChanged();
+	}
+
+	public void setCursor(Cursor cursor) {
+		this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 	}
 }

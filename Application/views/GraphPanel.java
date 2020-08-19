@@ -2,19 +2,10 @@ package views;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.Path2D;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -28,7 +19,6 @@ import javax.swing.border.LineBorder;
 
 import controller.GraphPanelController;
 import model.GraphPanelModel;
-import service.Calculator;
 import service.ValueChangedListener;
 
 /**
@@ -60,7 +50,6 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 	private Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK, Color.CYAN, Color.MAGENTA, Color.ORANGE,
 			Color.GRAY, Color.PINK, Color.YELLOW };
 
-	private Calculator calculator = new Calculator();
 
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
@@ -86,57 +75,59 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		GraphPanelController controller = new GraphPanelController(model);
 		
 		this.addMouseWheelListener(controller);
+		this.addMouseListener(controller);
+		this.addMouseMotionListener(controller);
 
-		this.addMouseWheelListener(new MouseWheelListener() {
-			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				double scale = e.getPreciseWheelRotation() * 0.05;
-				double diff = (GraphPanel.this.xMax - GraphPanel.this.xMin) * scale;
-				double xMinDiff = diff * (((e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
-				double xMaxDiff = diff * ((model.pixelToX(panelWidth - e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
-				double yMinDiff = diff * ((model.pixelToY(panelHeight - e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
-				double yMaxDiff = diff * ((model.pixelToY(e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
-				GraphPanel.this.xMin -= xMinDiff;
-				GraphPanel.this.xMax += xMaxDiff;
-				GraphPanel.this.yMin += yMinDiff;
-				GraphPanel.this.yMax -= yMaxDiff;
+		// this.addMouseWheelListener(new MouseWheelListener() {
+		// 	@Override
+		// 	public void mouseWheelMoved(MouseWheelEvent e) {
+		// 		double scale = e.getPreciseWheelRotation() * 0.05;
+		// 		double diff = (GraphPanel.this.xMax - GraphPanel.this.xMin) * scale;
+		// 		double xMinDiff = diff * (((e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
+		// 		double xMaxDiff = diff * ((model.pixelToX(panelWidth - e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
+		// 		double yMinDiff = diff * ((model.pixelToY(panelHeight - e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
+		// 		double yMaxDiff = diff * ((model.pixelToY(e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
+		// 		GraphPanel.this.xMin -= xMinDiff;
+		// 		GraphPanel.this.xMax += xMaxDiff;
+		// 		GraphPanel.this.yMin += yMinDiff;
+		// 		GraphPanel.this.yMax -= yMaxDiff;
 
-				coordinateSystem = new CoordinateSystem(model);
+		// 		coordinateSystem = new CoordinateSystem(model);
 
-				tPool.execute(GraphPanel.this);
-			}
-		});
+		// 		tPool.execute(GraphPanel.this);
+		// 	}
+		// });
 
-		this.addMouseListener((MouseListener) new MouseAdapter() {			
-			public void mousePressed(MouseEvent e) { // gets the position of the mouse when clicked
-				mousePressingPoint = e.getPoint();
-			}
+		// this.addMouseListener((MouseListener) new MouseAdapter() {			
+		// 	public void mousePressed(MouseEvent e) { // gets the position of the mouse when clicked
+		// 		mousePressingPoint = e.getPoint();
+		// 	}
 			
-			public void mouseEntered(MouseEvent e) {
-				GraphPanel.this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
-			}
-		});
+		// 	public void mouseEntered(MouseEvent e) {
+		// 		GraphPanel.this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
+		// 	}
+		// });
 
-		this.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) { // calculates the new window position
-				int xDifference = mousePressingPoint.x - e.getX();
-				int yDifference = mousePressingPoint.y - e.getY();
+		// this.addMouseMotionListener(new MouseMotionAdapter() {
+		// 	@Override
+		// 	public void mouseDragged(MouseEvent e) { // calculates the new window position
+		// 		int xDifference = mousePressingPoint.x - e.getX();
+		// 		int yDifference = mousePressingPoint.y - e.getY();
 
-				double x = model.pixelToX(xDifference) - GraphPanel.this.xMin;
-				double y = model.pixelToY(yDifference) - GraphPanel.this.yMax;
-				GraphPanel.this.xMin += x;
-				GraphPanel.this.xMax += x;
-				GraphPanel.this.yMin += y;
-				GraphPanel.this.yMax += y;
+		// 		double x = model.pixelToX(xDifference) - GraphPanel.this.xMin;
+		// 		double y = model.pixelToY(yDifference) - GraphPanel.this.yMax;
+		// 		GraphPanel.this.xMin += x;
+		// 		GraphPanel.this.xMax += x;
+		// 		GraphPanel.this.yMin += y;
+		// 		GraphPanel.this.yMax += y;
 
-				mousePressingPoint = e.getPoint();
+		// 		mousePressingPoint = e.getPoint();
 
-				coordinateSystem = new CoordinateSystem(model);
+		// 		coordinateSystem = new CoordinateSystem(model);
 
-				tPool.execute(GraphPanel.this);
-			}
-		});
+		// 		tPool.execute(GraphPanel.this);
+		// 	}
+		// });
 	}
 
 	@Override
@@ -160,15 +151,6 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		values = new int[10][panelWidth];
 	}
 
-	// public void setFunctions(String[] functions) {
-	// 	if (functions.length <= 10) {
-	// 		this.functions = functions;
-
-	// 		tPool.execute(this);
-
-	// 	}
-	// }
-
 	private void paintFunctions(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 
@@ -189,19 +171,6 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 			}
 		}
 	}
-
-	// private void evaluateFunctions() {
-	// 	double difference = (double) (xMax - xMin) / panelWidth;
-	// 	for (int i = 0; i < functions.length; i++) {
-	// 		if (functions[i] != null) {
-	// 			if (calculator.setTerm(functions[i])) {
-	// 				for (int j = 0; j < panelWidth; j++) {
-	// 					values[i][j] = (int) yToPixel(calculator.calculateValue(xMin + j * difference));
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	@Override
 	public void run() {

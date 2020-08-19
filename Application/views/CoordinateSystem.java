@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import model.GraphPanelModel;
 import service.ValueChangedListener;
 
-import java.util.ArrayList;
 
 public class CoordinateSystem implements ValueChangedListener {
 	
