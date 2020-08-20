@@ -36,8 +36,7 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 	}
 	
 	public MainFrame() {
-		GraphPanelModel model = new GraphPanelModel();
-		model.addValueChangedListener(this);
+		GraphPanelModel model = new GraphPanelModel(-5, 5, -5, 5);
 		
 		MainFrameController controller = new MainFrameController(model);
 		
@@ -48,7 +47,7 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		GraphPanel panel = new GraphPanel(-5, 5, -5, 5, model);
+		GraphPanel panel = new GraphPanel(model);
 		model.addValueChangedListener(panel);
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);

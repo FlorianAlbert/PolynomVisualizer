@@ -53,11 +53,6 @@ public class GraphPanelController implements MouseListener, MouseWheelListener, 
 		
 	}
 
-	public void mouseEntered(Cursor e) {
-		// TODO Auto-generated method stub
-		model.setCursor(e);
-	}
-
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -67,6 +62,6 @@ public class GraphPanelController implements MouseListener, MouseWheelListener, 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		model.setCursorType(Cursor.MOVE_CURSOR);
 	}
 }

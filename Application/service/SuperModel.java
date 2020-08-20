@@ -7,6 +7,7 @@ public class SuperModel {
 	
 	public void addValueChangedListener(ValueChangedListener listener) {
 		this.listener.add(listener);
+		ValueChanged();
 	}
 	
 	public void removeValueChangedListener(ValueChangedListener listener) {

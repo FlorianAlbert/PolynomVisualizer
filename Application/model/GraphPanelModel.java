@@ -31,9 +31,16 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	public String[] functions = new String[10];
 	
 	private Point mousePressingPoint;
+	private int cursorType;
+	
+	private int[][] functionValues;
 
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
+	
+	public GraphPanelModel(double xMin, double xMax, double yMin, double yMax) {
+		setXYUnits(xMin, xMax, yMin, yMax);
+	}
 
     private void drawXNumbers(Graphics2D g2d, int xAxisY) {
 		int yneg = xAxisY + 3; // vertical Lines
@@ -131,7 +138,6 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 				if (calculator.setTerm(functions[i])) {
 					for (int j = 0; j < panelWidth; j++) {
 						values[i][j] = (int) yToPixel(calculator.calculateValue(xMin + j * difference));
-						return values;
 					}
 				}
 			}
@@ -159,8 +165,11 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	@Override
 	public void run() {
-	    // TODO Auto-generated method stub
-	    
+		synchronized (this) {
+			functionValues = evaluateFunctions(functions);
+		}
+		
+		ValueChanged();
 	}
 	
 	public void setXYUnits(double xMin, double xMax, double yMin, double yMax) {
@@ -201,9 +210,9 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		yMin += y;
 		yMax += y;
 
-		//mousePressingPoint = e.getPoint();
+		mousePressingPoint = newPoint;
 		
-		ValueChanged();
+		tPool.execute(this);
 	}
 
 	public void calculateXYAfterWheel(MouseWheelEvent e) {
@@ -218,10 +227,35 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		this.yMin += yMinDiff;
 		this.yMax -= yMaxDiff;
 
+		tPool.execute(this);
+	}
+	
+	public int getCursorType() {
+		return cursorType;
+	}
+
+	public void setCursorType(int cursorType) {
+		this.cursorType = cursorType;
 		ValueChanged();
 	}
 
-	public void setCursor(Cursor cursor) {
-		this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
+	public String[] getFunctions() {
+		return functions;
+	}
+
+	public int[][] getFunctionValues() {
+		return functionValues;
+	}
+
+	public int getPanelWidth() {
+		return panelWidth;
+	}
+
+	public void setPanelWidth(int width) {
+		this.panelWidth = width;
+	}
+
+	public void setPanelHeight(int height) {
+		this.panelHeight = height;
 	}
 }
