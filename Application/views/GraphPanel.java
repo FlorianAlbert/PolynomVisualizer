@@ -72,6 +72,7 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		Border margin = new LineBorder(Color.black, 1);
 		setBorder(new CompoundBorder(border, margin));
 		
+		this.model = model;
 		GraphPanelController controller = new GraphPanelController(model);
 		
 		this.addMouseWheelListener(controller);
