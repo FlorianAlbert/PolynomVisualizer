@@ -210,9 +210,9 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		yMin += y;
 		yMax += y;
 
-		//mousePressingPoint = e.getPoint();
+		mousePressingPoint = newPoint;
 		
-		ValueChanged();
+		tPool.execute(this);
 	}
 
 	public void calculateXYAfterWheel(MouseWheelEvent e) {
@@ -227,7 +227,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		this.yMin += yMinDiff;
 		this.yMax -= yMaxDiff;
 
-		ValueChanged();
+		tPool.execute(this);
 	}
 	
 	public int getCursorType() {
