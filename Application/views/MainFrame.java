@@ -64,7 +64,7 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 
 	@Override
 	public void onValueChanged() {
-		// TODO Auto-generated method stub
+
 		
 	}
 }

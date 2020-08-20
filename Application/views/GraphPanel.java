@@ -55,13 +55,6 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
 
-	/**
-	 * Create the GraphPanel
-	 */
-
-	// public GraphPanel() {
-	// 	this(-10, 10, -10, 10, );
-	// }
 
 	public GraphPanel(GraphPanelModel model) {
 		Border border = getBorder();
@@ -77,56 +70,6 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		this.addMouseListener(controller);
 		this.addMouseMotionListener(controller);
 
-		// this.addMouseWheelListener(new MouseWheelListener() {
-		// 	@Override
-		// 	public void mouseWheelMoved(MouseWheelEvent e) {
-		// 		double scale = e.getPreciseWheelRotation() * 0.05;
-		// 		double diff = (GraphPanel.this.xxMax - GraphPanel.this.xMin) * scale;
-		// 		double xMinDiff = diff * (((e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
-		// 		double xMaxDiff = diff * ((model.pixelToX(panelWidth - e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
-		// 		double yMinDiff = diff * ((model.pixelToY(panelHeight - e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
-		// 		double yMaxDiff = diff * ((model.pixelToY(e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));
-		// 		GraphPanel.this.xMin -= xMinDiff;
-		// 		GraphPanel.this.xMax += xMaxDiff;
-		// 		GraphPanel.this.yMin += yMinDiff;
-		// 		GraphPanel.this.yMax -= yMaxDiff;
-
-		// 		coordinateSystem = new CoordinateSystem(model);
-
-		// 		tPool.execute(GraphPanel.this);
-		// 	}
-		// });
-
-		// this.addMouseListener((MouseListener) new MouseAdapter() {			
-		// 	public void mousePressed(MouseEvent e) { // gets the position of the mouse when clicked
-		// 		mousePressingPoint = e.getPoint();
-		// 	}
-			
-		// 	public void mouseEntered(MouseEvent e) {
-		// 		GraphPanel.this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
-		// 	}
-		// });
-
-		// this.addMouseMotionListener(new MouseMotionAdapter() {
-		// 	@Override
-		// 	public void mouseDragged(MouseEvent e) { // calculates the new window position
-		// 		int xDifference = mousePressingPoint.x - e.getX();
-		// 		int yDifference = mousePressingPoint.y - e.getY();
-
-		// 		double x = model.pixelToX(xDifference) - GraphPanel.this.xMin;
-		// 		double y = model.pixelToY(yDifference) - GraphPanel.this.yMax;
-		// 		GraphPanel.this.xMin += x;
-		// 		GraphPanel.this.xMax += x;
-		// 		GraphPanel.this.yMin += y;
-		// 		GraphPanel.this.yMax += y;
-
-		// 		mousePressingPoint = e.getPoint();
-
-		// 		coordinateSystem = new CoordinateSystem(model);
-
-		// 		tPool.execute(GraphPanel.this);
-		// 	}
-		// });
 	}
 
 	@Override

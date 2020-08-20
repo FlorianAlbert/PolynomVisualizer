@@ -14,13 +14,6 @@ public class CoordinateSystem{
 
 
 	public CoordinateSystem(GraphPanelModel m)  {
-		//  this.xMin = xMin;
-		//  this.xMax = xMax;
-		//  this.yMin = yMin;
-		//  this.yMax = yMax;
-
-		// this.panelWidth = width;
-		// this.panelHeight = height;
 		model = m;
 	}
 

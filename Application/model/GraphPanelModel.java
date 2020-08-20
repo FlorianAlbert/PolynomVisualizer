@@ -31,8 +31,6 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	
 	private Point mousePressingPoint;
 	private int cursorType;
-
-//	private int xAxisY;
 	
 	private ArrayList<UnitLocation> unitPoints = new ArrayList<UnitLocation>();
 	private int[][] functionValues;
@@ -307,14 +305,6 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	public int getPanelHeight(){
 		return panelHeight;
 	}
-
-//	public int getxAxisY() {
-//		return xAxisY;
-//	}
-//
-//	public void setxAxisY(int xAxisY) {
-//		this.xAxisY = xAxisY;
-//	}
 
 	public double getYMax(){
 		return yMax;
