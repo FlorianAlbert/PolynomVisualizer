@@ -21,7 +21,6 @@ public class GraphPanelController implements MouseListener, MouseWheelListener, 
 	public void mouseDragged(MouseEvent e) {
 		
 		model.calculateXYAfterMoving(e.getPoint());
-
 		
 	}
 

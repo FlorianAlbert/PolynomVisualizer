@@ -72,7 +72,6 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		GraphPanelController controller = new GraphPanelController(model);
 		
 		coordinateSystem = new CoordinateSystem(this.model);
-		model.addValueChangedListener(coordinateSystem);
 		
 		this.addMouseWheelListener(controller);
 		this.addMouseListener(controller);
@@ -82,7 +81,7 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		// 	@Override
 		// 	public void mouseWheelMoved(MouseWheelEvent e) {
 		// 		double scale = e.getPreciseWheelRotation() * 0.05;
-		// 		double diff = (GraphPanel.this.xMax - GraphPanel.this.xMin) * scale;
+		// 		double diff = (GraphPanel.this.xxMax - GraphPanel.this.xMin) * scale;
 		// 		double xMinDiff = diff * (((e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
 		// 		double xMaxDiff = diff * ((model.pixelToX(panelWidth - e.getX()) - GraphPanel.this.xMin) / (GraphPanel.this.xMax - GraphPanel.this.xMin));
 		// 		double yMinDiff = diff * ((model.pixelToY(panelHeight - e.getY()) - GraphPanel.this.yMax) / (GraphPanel.this.yMax - GraphPanel.this.yMin));

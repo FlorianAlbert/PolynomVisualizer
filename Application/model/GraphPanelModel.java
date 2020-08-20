@@ -2,9 +2,11 @@ package model;
 
 import service.Calculator;
 import service.SuperModel;
+import service.UnitLocation;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseWheelEvent;
@@ -22,9 +24,6 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	public int panelWidth;
 	public int panelHeight;
-
-	public ArrayList<Integer> xNumberList = new ArrayList<>();
-	public ArrayList<Integer> yNumberList = new ArrayList<>();
     
 	private Calculator calculator = new Calculator();
 
@@ -32,8 +31,15 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	
 	private Point mousePressingPoint;
 	private int cursorType;
+
+//	private int xAxisY;
 	
+	private ArrayList<UnitLocation> unitPoints = new ArrayList<UnitLocation>();
 	private int[][] functionValues;
+
+	private FontMetrics fontMetrics;
+
+	
 
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
@@ -42,84 +48,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		setXYUnits(xMin, xMax, yMin, yMax);
 	}
 
-    private void drawXNumbers(Graphics2D g2d, int xAxisY) {
-		int yneg = xAxisY + 3; // vertical Lines
-		int ypos = xAxisY - 3;
 
-		int help = (int) ((yMax - yMin) / 6 + 1);
-
-		//int heightDifference = g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent();
-
-		for (int i = (int) (Math.floor(xMin) + 1); i < xMax; i++) {
-
-			if (i % help == 0 && i != 0) {
-				int x = xToPixel(i);
-
-				// int middleDifference = g2d.getFontMetrics().stringWidth(Integer.toString(i)) / 2;
-
-				g2d.setColor(Color.LIGHT_GRAY);
-				g2d.drawLine(x, 0, x, panelHeight);
-				g2d.setColor(Color.BLACK);
-				g2d.drawLine(x, yneg, x, ypos);
-				
-				xNumberList.add(i);
-				
-//				if (xAxisY >= panelHeight - heightDifference - 15) {
-//					if (xAxisY >= panelHeight) {
-//						g2d.drawString(Integer.toString(i), x - middleDifference, panelHeight - 10);
-//						
-//					} else {
-//						g2d.drawString(Integer.toString(i), x - middleDifference, xAxisY - 10);
-//					}
-//				} else {
-//					if (xAxisY >= 0) {
-//						g2d.drawString(Integer.toString(i), x - middleDifference, xAxisY + 10 + heightDifference);
-//					} else {
-//						g2d.drawString(Integer.toString(i), x - middleDifference, 10 + heightDifference);
-//					}
-//				}
-			}
-		}
-	}
-
-	private void drawYNumbers(Graphics2D g2d, int yAxisX) {
-		int xneg = yAxisX - 3; // horizontal Lines
-		int xpos = yAxisX + 3;
-
-		int help = (int) ((yMax - yMin) / 6 + 1);
-
-		for (int i = (int) (Math.floor(yMin) + 1); i < yMax; i++) {
-
-			if (i % help == 0 && i != 0) {
-
-				int y = yToPixel(i);
-				//int lengthDifference = g2d.getFontMetrics().stringWidth(Integer.toString(i));
-
-				g2d.setColor(Color.LIGHT_GRAY);
-				g2d.drawLine(0, y, panelWidth, y);
-				g2d.setColor(Color.BLACK);
-				g2d.drawLine(xneg, y, xpos, y);
-
-				yNumberList.add(i);
-
-				// if (yAxisX - 2 * lengthDifference - 10 > 0) {
-				// if (yAxisX <= panelWidth) {
-				// 	g2d.drawString(Integer.toString(i), yAxisX - lengthDifference - 12,
-				// 			y + g2d.getFontMetrics().getDescent());
-				// 	} else {
-				// 	g2d.drawString(Integer.toString(i), panelWidth - lengthDifference - 12,
-				// 			y + g2d.getFontMetrics().getDescent());
-				// 	}
-				// } else {
-				//  	if (yAxisX >= 0) {
-				// 		g2d.drawString(Integer.toString(i), yAxisX + 12, y + g2d.getFontMetrics().getDescent());
-				// } else {
-				//  		g2d.drawString(Integer.toString(i), 12, y + g2d.getFontMetrics().getDescent());
-				// 	}
-				//  }
-			}
-		}
-	}
 
 	public void setFunctions(String[] functions) {
 		if (functions.length <= 10) {
@@ -173,26 +102,50 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	}
 	
 	public void setXYUnits(double xMin, double xMax, double yMin, double yMax) {
-		setxMin(xMin);
-		setxMax(xMax);
-		setyMin(yMin);
-		setyMax(yMax);
-		
-		ValueChanged();
+		this.xMin = xMin;
+		this.xMax = xMax;
+		this.yMin = yMin;
+		this.yMax = yMax;
+
+		if(fontMetrics != null) {
+		calculateXUnits();
+		calculateYUnits();
+		}
+		tPool.execute(this);
 	}
 	
 	public void setxMin(double xMin) {
 		this.xMin = xMin;
+		
+		if(fontMetrics != null) {
+		calculateXUnits();
+		}
+		
+		tPool.execute(this);
 	}
 
 	public void setxMax(double xMax) {
 		this.xMax = xMax;
+		
+		if(fontMetrics != null) {
+		calculateXUnits();
+		}
+		
+		tPool.execute(this);
 	}
 	public void setyMin(double yMin) {
 		this.yMin = yMin;
+		if(fontMetrics != null) {
+		calculateYUnits();
+		}
+		tPool.execute(this);
 	}
 	public void setyMax(double yMax) {
 		this.yMax = yMax;
+		if(fontMetrics != null) {
+		calculateYUnits();
+		}
+		tPool.execute(this);
 	}
 	
 	public void setMousePressingPoint(Point point) {
@@ -212,6 +165,8 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 		mousePressingPoint = newPoint;
 		
+		unitPoints = new ArrayList<UnitLocation>();
+		
 		tPool.execute(this);
 	}
 
@@ -226,9 +181,99 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		this.xMax += xMaxDiff;
 		this.yMin += yMinDiff;
 		this.yMax -= yMaxDiff;
+		
+		unitPoints = new ArrayList<UnitLocation>();
 
 		tPool.execute(this);
 	}
+
+
+
+
+
+	private void calculateYUnits() {    //yNumbers
+		int xneg = xToPixel(0) - 3; // horizontal Lines
+		int xpos = xToPixel(0) + 3;
+
+		int help = (int) ((yMax - yMin) / 6 + 1);
+
+		for (int i = (int) (Math.floor(yMin + 1)); i < yMax; i++) {
+
+			if (i % help == 0 && i != 0) {
+
+				UnitLocation unitPoint = new UnitLocation();
+				unitPoint.setValue(i);
+
+				int y = yToPixel(i);
+				int lengthDifference = fontMetrics.stringWidth(Integer.toString(i));
+
+				unitPoint.setNeg(new Point(xneg, y));
+				unitPoint.setPos(new Point(xpos, y));
+
+				if (xToPixel(0) - 2 * lengthDifference - 10 > 0) {
+					if (xToPixel(0) <= getPanelWidth()) {
+						unitPoint.setValLocation(new Point(xToPixel(0) - lengthDifference - 12, y + fontMetrics.getDescent()));
+					} else {
+						unitPoint.setValLocation(new Point(getPanelWidth() - lengthDifference - 12,
+								y + fontMetrics.getDescent()));
+					}
+				} else {
+					if (xToPixel(0) >= 0) {
+						unitPoint.setValLocation(new Point(xToPixel(0) + 12, y + fontMetrics.getDescent()));						
+					} else {
+						unitPoint.setValLocation(new Point(12, y + fontMetrics.getDescent()));	
+					}
+				}
+				unitPoints.add(unitPoint);
+			}
+		}
+	}	
+
+
+	private void calculateXUnits() {    //xNumbers
+		int yneg = yToPixel(0) - 3; // vertical Lines
+		int ypos = yToPixel(0) + 3;
+
+		int help = (int) ((yMax - yMin) / 6 + 1);
+
+		for (int i = (int) (Math.floor(xMin) + 1); i < xMax; i++) {
+
+			if (i % help == 0 && i != 0) {
+
+				UnitLocation unitPoint = new UnitLocation();
+				unitPoint.setValue(i);
+
+				int x = xToPixel(i);
+				int heightDifference = fontMetrics.getAscent() - fontMetrics.getDescent();
+				int middleDifference = fontMetrics.stringWidth(Integer.toString(i)) / 2;
+
+				unitPoint.setNeg(new Point(x, yneg));
+				unitPoint.setPos(new Point(x, ypos));
+
+				if (yToPixel(0) >= getPanelHeight() - heightDifference - 15) {
+					if (yToPixel(0) >= getPanelHeight()) {
+						unitPoint.setValLocation(new Point( x - middleDifference, getPanelHeight() - 10));
+					} else {
+						unitPoint.setValLocation(new Point( x - middleDifference, yToPixel(0) - 10));
+					}
+				} else {
+					if (yToPixel(0) >= 0) {
+						unitPoint.setValLocation(new Point( x - middleDifference, yToPixel(0) + 10 + heightDifference));
+					} else {
+						unitPoint.setValLocation(new Point( x - middleDifference, 10 + heightDifference));
+					}
+				}
+				unitPoints.add(unitPoint);
+			}
+		}
+	}	
+
+
+
+
+
+
+
 	
 	public int getCursorType() {
 		return cursorType;
@@ -257,5 +302,51 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	public void setPanelHeight(int height) {
 		this.panelHeight = height;
+	}
+
+	public int getPanelHeight(){
+		return panelHeight;
+	}
+
+//	public int getxAxisY() {
+//		return xAxisY;
+//	}
+//
+//	public void setxAxisY(int xAxisY) {
+//		this.xAxisY = xAxisY;
+//	}
+
+	public double getYMax(){
+		return yMax;
+	}
+
+	public double getYMin(){
+		return yMin;
+	}
+
+	public double getXMax(){
+		return xMax;
+	}
+
+	public double getXMin(){
+		return xMin;
+	}
+	
+	public ArrayList<UnitLocation> getUnitPoints() {
+		return unitPoints;
+	}
+
+	public void setUnitPoints(ArrayList<UnitLocation> unitPoints) {
+		this.unitPoints = unitPoints;
+	}
+	public FontMetrics getFontMetrics() {
+		return fontMetrics;
+	}
+
+	public void setFontMetrics(FontMetrics fontMetrics) {
+		this.fontMetrics = fontMetrics;
+		
+		calculateXUnits();
+		calculateYUnits();
 	}
 }
