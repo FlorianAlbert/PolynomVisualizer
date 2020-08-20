@@ -24,15 +24,22 @@ public class CoordinateSystem {
 		int xAxisY = model.yToPixel(0.0);
 		int yAxisX = model.xToPixel(0.0);
 
-		g2d.setColor(Color.BLACK); // Y- and X-Axis
-		g2d.drawLine(0, xAxisY, model.panelWidth, xAxisY);
-		g2d.drawLine(yAxisX, 0, yAxisX, model.panelHeight);
-
 		for (UnitLocation unitPoint : model.getUnitPoints()) {
+			g2d.setColor(Color.LIGHT_GRAY);
+			if (unitPoint.getNeg().x == unitPoint.getPos().x) {
+				g2d.drawLine(unitPoint.getNeg().x, 0, unitPoint.getPos().x, model.getPanelHeight());
+			} else {
+				g2d.drawLine(0, unitPoint.getNeg().y, model.getPanelWidth(), unitPoint.getPos().y);
+			}
+
+			g2d.setColor(Color.BLACK);
 			g2d.drawString(Integer.toString(unitPoint.getValue()), unitPoint.getValLocation().x,
 					unitPoint.getValLocation().y);
 			g2d.drawLine(unitPoint.getNeg().x, unitPoint.getNeg().y, unitPoint.getPos().x, unitPoint.getPos().y);
 		}
+
+		g2d.drawLine(0, xAxisY, model.panelWidth, xAxisY);
+		g2d.drawLine(yAxisX, 0, yAxisX, model.panelHeight);
 	}
 
 	public GraphPanelModel getModel() {
