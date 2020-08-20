@@ -37,7 +37,8 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	private FontMetrics fontMetrics;
 
-	
+	private Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK, Color.CYAN, Color.MAGENTA, Color.ORANGE,
+			Color.GRAY, Color.PINK, Color.YELLOW };
 
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
@@ -338,5 +339,9 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		
 		calculateXUnits();
 		calculateYUnits();
+	}
+	
+	public Color[] getColors() {
+		return colors;
 	}
 }

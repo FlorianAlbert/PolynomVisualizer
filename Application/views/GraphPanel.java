@@ -29,43 +29,23 @@ import service.ValueChangedListener;
  * 
  */
 
-public class GraphPanel extends JPanel implements Runnable, ValueChangedListener{
+public class GraphPanel extends JPanel implements ValueChangedListener {
 
 	private static final long serialVersionUID = -4286522701957270175L;
-	private int panelHeight;
-	private int panelWidth;
 
 	private CoordinateSystem coordinateSystem;
 	private GraphPanelModel model;
-
-	private double xMin;
-	private double xMax;
-	private double yMin;
-	private double yMax;
-
-	private String[] functions = new String[10];
-	private volatile int[][] values;
-
-	private Point mousePressingPoint;
-
-	private Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK, Color.CYAN, Color.MAGENTA, Color.ORANGE,
-			Color.GRAY, Color.PINK, Color.YELLOW };
-
-
-	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
-	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
-
 
 	public GraphPanel(GraphPanelModel model) {
 		Border border = getBorder();
 		Border margin = new LineBorder(Color.black, 1);
 		setBorder(new CompoundBorder(border, margin));
-		
+
 		this.model = model;
 		GraphPanelController controller = new GraphPanelController(model);
-		
+
 		coordinateSystem = new CoordinateSystem(this.model);
-		
+
 		this.addMouseWheelListener(controller);
 		this.addMouseListener(controller);
 		this.addMouseMotionListener(controller);
@@ -89,6 +69,8 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		model.setPanelHeight(height);
 	}
 
+	
+	//Schon als Path2D aus Model beziehen?
 	private void paintFunctions(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 
@@ -96,7 +78,7 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 		g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
 
 		for (int i = 0; i < model.getFunctions().length; i++) {
-			g2d.setColor(colors[i]);
+			g2d.setColor(model.getColors()[i]);
 			if (model.getFunctions()[i] != null) {
 				Path2D path = new Path2D.Double();
 
@@ -108,15 +90,6 @@ public class GraphPanel extends JPanel implements Runnable, ValueChangedListener
 				g2d.draw(path);
 			}
 		}
-	}
-
-	@Override
-	public void run() {
-		synchronized (this) {
-			values = model.evaluateFunctions(functions);
-		}
-
-		repaint();
 	}
 
 	@Override

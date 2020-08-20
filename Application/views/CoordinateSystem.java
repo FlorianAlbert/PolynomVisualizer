@@ -7,13 +7,11 @@ import model.GraphPanelModel;
 import service.UnitLocation;
 import service.ValueChangedListener;
 
+public class CoordinateSystem {
 
-public class CoordinateSystem{
-	
 	private GraphPanelModel model;
 
-
-	public CoordinateSystem(GraphPanelModel m)  {
+	public CoordinateSystem(GraphPanelModel m) {
 		model = m;
 	}
 
@@ -30,22 +28,22 @@ public class CoordinateSystem{
 		g2d.drawLine(0, xAxisY, model.panelWidth, xAxisY);
 		g2d.drawLine(yAxisX, 0, yAxisX, model.panelHeight);
 
-		for(UnitLocation unitPoint: model.getUnitPoints()) {
-			g2d.drawString(Integer.toString(unitPoint.getValue()), unitPoint.getValLocation().x, unitPoint.getValLocation().y);
+		for (UnitLocation unitPoint : model.getUnitPoints()) {
+			g2d.drawString(Integer.toString(unitPoint.getValue()), unitPoint.getValLocation().x,
+					unitPoint.getValLocation().y);
 			g2d.drawLine(unitPoint.getNeg().x, unitPoint.getNeg().y, unitPoint.getPos().x, unitPoint.getPos().y);
 		}
 	}
-	
 
 	public GraphPanelModel getModel() {
-			return model;
-		}
+		return model;
+	}
 
-		public void setModel(GraphPanelModel model) {
-			this.model = model;
-		}
+	public void setModel(GraphPanelModel model) {
+		this.model = model;
+	}
 
-	public void drawNumber(Graphics g, int number, int x, int y){
-		g.drawString( Integer.toString(number), x, y);
+	public void drawNumber(Graphics g, int number, int x, int y) {
+		g.drawString(Integer.toString(number), x, y);
 	}
 }
