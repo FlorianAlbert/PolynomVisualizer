@@ -9,7 +9,6 @@ public class UnitLocation {
     private Point valLocation;
     private int value;
     
-
     
     public Point getNeg() {
 		return neg;

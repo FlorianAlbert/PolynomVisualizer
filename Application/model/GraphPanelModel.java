@@ -5,11 +5,10 @@ import service.SuperModel;
 import service.UnitLocation;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,23 +16,22 @@ import java.util.concurrent.TimeUnit;
 
 public class GraphPanelModel extends SuperModel implements Runnable {
 
-    public double xMin;
-	public double xMax;
-	public double yMin;
-	public double yMax;
+    private double xMin;
+    private double xMax;
+    private double yMin;
+    private double yMax;
 
-	public int panelWidth;
-	public int panelHeight;
-    
+    private int panelWidth;
+    private int panelHeight;
+	
+    private String[] functions = new String[10];
 	private Calculator calculator = new Calculator();
 
-	public String[] functions = new String[10];
-	
 	private Point mousePressingPoint;
 	private int cursorType;
 	
 	private ArrayList<UnitLocation> unitPoints = new ArrayList<UnitLocation>();
-	private int[][] functionValues;
+	private Path2D[] functionPaths = new Path2D[10];
 
 	private FontMetrics fontMetrics;
 
@@ -47,8 +45,24 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		setXYUnits(xMin, xMax, yMin, yMax);
 	}
 
+	
+	public int getCursorType() {
+		return cursorType;
+	}
 
+	public void setCursorType(int cursorType) {
+		this.cursorType = cursorType;
+		ValueChanged();
+	}
 
+	public void setMousePressingPoint(Point point) {
+		mousePressingPoint = point;
+	}
+
+	public String[] getFunctions() {
+		return functions;
+	}
+	
 	public void setFunctions(String[] functions) {
 		if (functions.length <= 10) {
 			this.functions = functions;
@@ -58,46 +72,76 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		}
 	}
 
-	public int[][] evaluateFunctions(String[] functions) {
-		int[][] values = new int[functions.length][panelWidth];
-		double difference = (double) (xMax - xMin) / panelWidth;
-		for (int i = 0; i < functions.length; i++) {
-			if (functions[i] != null) {
-				if (calculator.setTerm(functions[i])) {
-					for (int j = 0; j < panelWidth; j++) {
-						values[i][j] = (int) yToPixel(calculator.calculateValue(xMin + j * difference));
-					}
-				}
-			}
+	public Path2D[] getFunctionPaths() {
+		return functionPaths;
+	}
+
+	public int getPanelWidth() {
+		return panelWidth;
+	}
+
+	public void setPanelWidth(int width) {
+		this.panelWidth = width;
+	}
+
+	public void setPanelHeight(int height) {
+		this.panelHeight = height;
+	}
+
+	public int getPanelHeight(){
+		return panelHeight;
+	}
+
+	public double getYMax(){
+		return yMax;
+	}
+	
+	public void setyMax(double yMax) {
+		this.yMax = yMax;
+		if(fontMetrics != null) {
+		calculateYUnits();
 		}
-		return values;
+		tPool.execute(this);
 	}
 
-	public double pixelToX(int pixelX) { // calculates corresponding x-value of a pixel
-		return xMin + pixelX * (xMax - xMin) / panelWidth;
+	public double getYMin(){
+		return yMin;
+	}
+	
+	public void setyMin(double yMin) {
+		this.yMin = yMin;
+		if(fontMetrics != null) {
+		calculateYUnits();
+		}
+		tPool.execute(this);
 	}
 
-	public double pixelToY(int pixelY) { // calculates corresponding y-value of a pixel
-		return yMax - pixelY * (yMax - yMin) / panelHeight; // (panelHeight - pixelY) / panelHeight * (yMax - yMin) +
-															// yMax;
-
+	public double getXMax(){
+		return xMax;
 	}
 
-	public int xToPixel(double x) { // calculates the x-position in the Coord-System
-		return (int) ((x - xMin) / (xMax - xMin) * panelWidth);
-	}
-
-	public int yToPixel(double y) {
-		return panelHeight - (int) ((y - yMin) / (yMax - yMin) * panelHeight); // evtl +yMax
-	}
-
-	@Override
-	public void run() {
-		synchronized (this) {
-			functionValues = evaluateFunctions(functions);
+	public void setxMax(double xMax) {
+		this.xMax = xMax;
+		
+		if(fontMetrics != null) {
+		calculateXUnits();
 		}
 		
-		ValueChanged();
+		tPool.execute(this);
+	}
+
+	public double getXMin(){
+		return xMin;
+	}
+	
+	public void setxMin(double xMin) {
+		this.xMin = xMin;
+		
+		if(fontMetrics != null) {
+		calculateXUnits();
+		}
+		
+		tPool.execute(this);
 	}
 	
 	public void setXYUnits(double xMin, double xMax, double yMin, double yMax) {
@@ -113,42 +157,57 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		tPool.execute(this);
 	}
 	
-	public void setxMin(double xMin) {
-		this.xMin = xMin;
-		
-		if(fontMetrics != null) {
-		calculateXUnits();
-		}
-		
-		tPool.execute(this);
-	}
-
-	public void setxMax(double xMax) {
-		this.xMax = xMax;
-		
-		if(fontMetrics != null) {
-		calculateXUnits();
-		}
-		
-		tPool.execute(this);
-	}
-	public void setyMin(double yMin) {
-		this.yMin = yMin;
-		if(fontMetrics != null) {
-		calculateYUnits();
-		}
-		tPool.execute(this);
-	}
-	public void setyMax(double yMax) {
-		this.yMax = yMax;
-		if(fontMetrics != null) {
-		calculateYUnits();
-		}
-		tPool.execute(this);
+	public ArrayList<UnitLocation> getUnitPoints() {
+		return unitPoints;
 	}
 	
-	public void setMousePressingPoint(Point point) {
-		mousePressingPoint = point;
+	public FontMetrics getFontMetrics() {
+		return fontMetrics;
+	}
+
+	public void setFontMetrics(FontMetrics fontMetrics) {
+		this.fontMetrics = fontMetrics;
+		
+		calculateXUnits();
+		calculateYUnits();
+	}
+	
+	public Color[] getColors() {
+		return colors;
+	}
+
+	public Path2D[] evaluateFunctions(String[] functions) {
+		Path2D[] functionPathsIntern = new Path2D[10];
+		double difference = (double) (xMax - xMin) / panelWidth;
+		for (int i = 0; i < functions.length; i++) {
+			if (functions[i] != null) {
+				if (calculator.setTerm(functions[i])) {
+					functionPathsIntern[i] = new Path2D.Double();
+					functionPathsIntern[i].moveTo(0, yToPixel(calculator.calculateValue(xMin)));
+					for (int j = 1; j < panelWidth; j++) {
+						functionPathsIntern[i].lineTo(j, yToPixel(calculator.calculateValue(xMin + j * difference)));
+					}
+				}
+			}
+		}
+		return functionPathsIntern;
+	}
+
+	public double pixelToX(int pixelX) {
+		return xMin + pixelX * (xMax - xMin) / panelWidth;
+	}
+
+	public double pixelToY(int pixelY) { 
+		return yMax - pixelY * (yMax - yMin) / panelHeight; 
+
+	}
+
+	public int xToPixel(double x) { 
+		return (int) ((x - xMin) / (xMax - xMin) * panelWidth);
+	}
+
+	public int yToPixel(double y) {
+		return panelHeight - (int) ((y - yMin) / (yMax - yMin) * panelHeight);
 	}
 	
 	public void calculateXYAfterMoving(Point newPoint) {
@@ -186,12 +245,8 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		tPool.execute(this);
 	}
 
-
-
-
-
-	private void calculateYUnits() {    //yNumbers
-		int xneg = xToPixel(0) - 3; // horizontal Lines
+	private void calculateYUnits() {
+		int xneg = xToPixel(0) - 3;
 		int xpos = xToPixel(0) + 3;
 
 		int help = (int) ((yMax - yMin) / 6 + 1);
@@ -228,9 +283,8 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		}
 	}	
 
-
-	private void calculateXUnits() {    //xNumbers
-		int yneg = yToPixel(0) - 3; // vertical Lines
+	private void calculateXUnits() { 
+		int yneg = yToPixel(0) - 3; 
 		int ypos = yToPixel(0) + 3;
 
 		int help = (int) ((yMax - yMin) / 6 + 1);
@@ -265,83 +319,14 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 				unitPoints.add(unitPoint);
 			}
 		}
-	}	
-
-
-
-
-
-
-
-	
-	public int getCursorType() {
-		return cursorType;
 	}
 
-	public void setCursorType(int cursorType) {
-		this.cursorType = cursorType;
-		ValueChanged();
-	}
-
-	public String[] getFunctions() {
-		return functions;
-	}
-
-	public int[][] getFunctionValues() {
-		return functionValues;
-	}
-
-	public int getPanelWidth() {
-		return panelWidth;
-	}
-
-	public void setPanelWidth(int width) {
-		this.panelWidth = width;
-	}
-
-	public void setPanelHeight(int height) {
-		this.panelHeight = height;
-	}
-
-	public int getPanelHeight(){
-		return panelHeight;
-	}
-
-	public double getYMax(){
-		return yMax;
-	}
-
-	public double getYMin(){
-		return yMin;
-	}
-
-	public double getXMax(){
-		return xMax;
-	}
-
-	public double getXMin(){
-		return xMin;
-	}
-	
-	public ArrayList<UnitLocation> getUnitPoints() {
-		return unitPoints;
-	}
-
-	public void setUnitPoints(ArrayList<UnitLocation> unitPoints) {
-		this.unitPoints = unitPoints;
-	}
-	public FontMetrics getFontMetrics() {
-		return fontMetrics;
-	}
-
-	public void setFontMetrics(FontMetrics fontMetrics) {
-		this.fontMetrics = fontMetrics;
+	@Override
+	public void run() {
+		synchronized (this) {
+			functionPaths = evaluateFunctions(functions);
+		}
 		
-		calculateXUnits();
-		calculateYUnits();
-	}
-	
-	public Color[] getColors() {
-		return colors;
+		ValueChanged();
 	}
 }

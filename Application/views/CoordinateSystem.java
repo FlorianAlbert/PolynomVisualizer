@@ -15,14 +15,19 @@ public class CoordinateSystem {
 		model = m;
 	}
 
+	public GraphPanelModel getModel() {
+		return model;
+	}
+
+	public void setModel(GraphPanelModel model) {
+		this.model = model;
+	}
+
 	public void paint(Graphics g) {
 
 		model.setFontMetrics(g.getFontMetrics());
 
 		Graphics2D g2d = (Graphics2D) g;
-
-		int xAxisY = model.yToPixel(0.0);
-		int yAxisX = model.xToPixel(0.0);
 
 		for (UnitLocation unitPoint : model.getUnitPoints()) {
 			g2d.setColor(Color.LIGHT_GRAY);
@@ -38,19 +43,7 @@ public class CoordinateSystem {
 			g2d.drawLine(unitPoint.getNeg().x, unitPoint.getNeg().y, unitPoint.getPos().x, unitPoint.getPos().y);
 		}
 
-		g2d.drawLine(0, xAxisY, model.panelWidth, xAxisY);
-		g2d.drawLine(yAxisX, 0, yAxisX, model.panelHeight);
-	}
-
-	public GraphPanelModel getModel() {
-		return model;
-	}
-
-	public void setModel(GraphPanelModel model) {
-		this.model = model;
-	}
-
-	public void drawNumber(Graphics g, int number, int x, int y) {
-		g.drawString(Integer.toString(number), x, y);
+		g2d.drawLine(0, model.yToPixel(0.0), model.getPanelWidth(), model.yToPixel(0.0));
+		g2d.drawLine(model.xToPixel(0.0), 0, model.xToPixel(0.0), model.getPanelHeight());
 	}
 }

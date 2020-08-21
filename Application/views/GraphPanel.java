@@ -5,13 +5,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.geom.Path2D;
-import java.util.concurrent.ArrayBlockingQueue;
-
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -49,7 +43,20 @@ public class GraphPanel extends JPanel implements ValueChangedListener {
 		this.addMouseWheelListener(controller);
 		this.addMouseListener(controller);
 		this.addMouseMotionListener(controller);
+	}
 
+	private void paintFunctions(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+
+		for (int i = 0; i < model.getFunctionPaths().length; i++) {
+			g2d.setColor(model.getColors()[i]);
+			if (model.getFunctionPaths()[i] != null) {
+				g2d.draw(model.getFunctionPaths()[i]);
+			}
+		}
 	}
 
 	@Override
@@ -67,29 +74,6 @@ public class GraphPanel extends JPanel implements ValueChangedListener {
 
 		model.setPanelWidth(width);
 		model.setPanelHeight(height);
-	}
-
-	
-	//Schon als Path2D aus Model beziehen?
-	private void paintFunctions(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
-
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-
-		for (int i = 0; i < model.getFunctions().length; i++) {
-			g2d.setColor(model.getColors()[i]);
-			if (model.getFunctions()[i] != null) {
-				Path2D path = new Path2D.Double();
-
-				path.moveTo(0, model.getFunctionValues()[i][0]);
-				for (int j = 1; j < model.getPanelWidth(); j++) {
-					path.lineTo(j, model.getFunctionValues()[i][j]);
-				}
-
-				g2d.draw(path);
-			}
-		}
 	}
 
 	@Override
