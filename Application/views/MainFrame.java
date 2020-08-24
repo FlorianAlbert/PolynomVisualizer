@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import controller.MainFrameController;
@@ -52,19 +53,27 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 		panel.setBounds(10, 11, 418, 244);
 		contentPane.add(panel);
 
-		JButton btnRefresh = new JButton("Refresh");
-		btnRefresh.addActionListener(new ActionListener() {
+		JTextField tfFunctionInput = new JTextField("", 20);
+		tfFunctionInput.setBounds(10, 269, 250, 25);
+		contentPane.add(tfFunctionInput);
+
+		JButton btnBestaetig = new JButton("Bestätigen");
+		btnBestaetig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				model.setFunctions(new String[] {"x^2", "x^2-0.2", "x^2+0.2", "x^2-0.4", "-x^+3", "x^2+0.4", "x^2-0.6", "x^2+0.6", "x^2-0.8", "x^2+0.8"});
+				String input = tfFunctionInput.getText();
+				tfFunctionInput.setText("");
+				String[] inputArray = new String[] {input};
+				model.setFunctions(inputArray);
 			}
 		});
-		btnRefresh.setBounds(10, 269, 89, 23);
-		contentPane.add(btnRefresh);		
+		
+		btnBestaetig.setBounds(300, 269, 89, 23);
+		contentPane.add(btnBestaetig);		
 	}
 
 	@Override
 	public void onValueChanged() {
-		// TODO Auto-generated method stub
+
 		
 	}
 }

@@ -3,7 +3,7 @@ package service;
 import java.util.ArrayList;
 
 public class SuperModel {
-	ArrayList<ValueChangedListener> listener = new ArrayList<>();
+	private ArrayList<ValueChangedListener> listener = new ArrayList<>();
 	
 	public void addValueChangedListener(ValueChangedListener listener) {
 		this.listener.add(listener);
