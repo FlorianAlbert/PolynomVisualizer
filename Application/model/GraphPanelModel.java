@@ -72,8 +72,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 			functions[0] = function;
 			functCounter = 0;
 		}
-		evaluateFunctions(functions);
-		ValueChanged();
+		tPool.execute(this);
 	}
 
 	public String[] getFunctions() {
@@ -83,9 +82,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	public void setFunctions(String[] functions) {
 		if (functions.length <= 10) {
 			this.functions = functions;
-
 			tPool.execute(this);
-
 		}
 	}
 
