@@ -24,8 +24,11 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
     private int panelWidth;
     private int panelHeight;
+
+	private String input;
 	
     private String[] functions = new String[10];
+	private int functCounter;
 	private Calculator calculator = new Calculator();
 
 	private Point mousePressingPoint;
@@ -58,6 +61,19 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	public void setMousePressingPoint(Point point) {
 		mousePressingPoint = point;
+	}
+
+	public void addFunction(String function) {
+		if(functCounter < 10){
+			functions[functCounter] = function;
+			functCounter++;
+		}
+		else{
+			functions[0] = function;
+			functCounter = 0;
+		}
+		evaluateFunctions(functions);
+		ValueChanged();
 	}
 
 	public String[] getFunctions() {
@@ -332,8 +348,5 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	}
 
 
-	public void setInput(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

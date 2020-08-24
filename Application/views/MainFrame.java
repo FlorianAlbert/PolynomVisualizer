@@ -39,8 +39,6 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 	public MainFrame() {
 		GraphPanelModel model = new GraphPanelModel(-5, 5, -5, 5);
 		
-		MainFrameController controller = new MainFrameController(model);
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 451, 337);
 		contentPane = new JPanel();
@@ -56,16 +54,19 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 		JTextField tfFunctionInput = new JTextField("", 20);
 		tfFunctionInput.setBounds(10, 269, 250, 25);
 		contentPane.add(tfFunctionInput);
+		
+		MainFrameController controller = new MainFrameController(model, tfFunctionInput);
 
 		JButton btnBestaetig = new JButton("Bestätigen");
-		btnBestaetig.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String input = tfFunctionInput.getText();
-				tfFunctionInput.setText("");
-				String[] inputArray = new String[] {input};
-				model.setFunctions(inputArray);
-			}
-		});
+//		btnBestaetig.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				String input = tfFunctionInput.getText();
+//				tfFunctionInput.setText("");
+//				String[] inputArray = new String[] {input};
+//				model.setFunctions(inputArray);
+//			}
+//		});
+		btnBestaetig.addActionListener(controller);
 		
 		btnBestaetig.setBounds(300, 269, 89, 23);
 		contentPane.add(btnBestaetig);		
