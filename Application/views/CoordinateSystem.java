@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import model.GraphPanelModel;
 import service.UnitLocation;
-import service.ValueChangedListener;
 
 public class CoordinateSystem {
 

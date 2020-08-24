@@ -7,6 +7,7 @@ import service.UnitLocation;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -328,5 +329,11 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		}
 		
 		ValueChanged();
+	}
+
+
+	public void setInput(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
