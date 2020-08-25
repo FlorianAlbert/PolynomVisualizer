@@ -16,11 +16,17 @@ public class MainFrameController implements ActionListener{
 		tfFunctionInput = textField;
 		this.model = model;
 	}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(e.getActionCommand().equals("Bestätigen")) {
 		model.addFunction(tfFunctionInput.getText());
 		tfFunctionInput.setText("");
+		}
+		else if(e.getActionCommand().equals("Entfernen")){
+			model.resetFunctions();
+		}
 	}
 	
 }

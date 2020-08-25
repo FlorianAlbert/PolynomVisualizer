@@ -85,6 +85,12 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		}
 	}
 
+	public void resetFunctions() {
+		functions = new String[10];
+		tPool.execute(this);
+		ValueChanged();
+	}
+	
 	public Path2D[] getFunctionPaths() {
 		return functionPaths;
 	}
@@ -342,7 +348,4 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		
 		ValueChanged();
 	}
-
-
-
 }

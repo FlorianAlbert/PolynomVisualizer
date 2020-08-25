@@ -58,8 +58,16 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 		JButton btnBestaetig = new JButton("Bestätigen");
 		btnBestaetig.addActionListener(controller);
 		
-		btnBestaetig.setBounds(300, 269, 89, 23);
-		contentPane.add(btnBestaetig);		
+		JButton btnDelete = new JButton("Entfernen");
+		btnDelete.addActionListener(controller);
+		
+		btnBestaetig.setActionCommand("Bestätigen");
+		btnBestaetig.setBounds(270, 269, 70, 23);
+		contentPane.add(btnBestaetig);	
+		
+		btnDelete.setActionCommand("Entfernen");
+		btnDelete.setBounds(350, 269, 70, 23);
+		contentPane.add(btnDelete);			
 	}
 
 	@Override
