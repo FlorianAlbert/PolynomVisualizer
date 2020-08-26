@@ -1,8 +1,6 @@
 package views;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -58,18 +56,18 @@ public class MainFrame extends JFrame implements ValueChangedListener{
 		MainFrameController controller = new MainFrameController(model, tfFunctionInput);
 
 		JButton btnBestaetig = new JButton("Bestätigen");
-//		btnBestaetig.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				String input = tfFunctionInput.getText();
-//				tfFunctionInput.setText("");
-//				String[] inputArray = new String[] {input};
-//				model.setFunctions(inputArray);
-//			}
-//		});
 		btnBestaetig.addActionListener(controller);
 		
-		btnBestaetig.setBounds(300, 269, 89, 23);
-		contentPane.add(btnBestaetig);		
+		JButton btnDelete = new JButton("Entfernen");
+		btnDelete.addActionListener(controller);
+		
+		btnBestaetig.setActionCommand("Bestätigen");
+		btnBestaetig.setBounds(270, 269, 70, 23);
+		contentPane.add(btnBestaetig);	
+		
+		btnDelete.setActionCommand("Entfernen");
+		btnDelete.setBounds(350, 269, 70, 23);
+		contentPane.add(btnDelete);			
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import service.UnitLocation;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -24,8 +23,6 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
     private int panelWidth;
     private int panelHeight;
-
-	private String input;
 	
     private String[] functions = new String[10];
 	private int functCounter;
@@ -86,6 +83,12 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		}
 	}
 
+	public void resetFunctions() {
+		functions = new String[10];
+		tPool.execute(this);
+		ValueChanged();
+	}
+	
 	public Path2D[] getFunctionPaths() {
 		return functionPaths;
 	}
@@ -343,7 +346,4 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		
 		ValueChanged();
 	}
-
-
-
 }
