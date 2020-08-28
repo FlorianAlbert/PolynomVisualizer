@@ -24,8 +24,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
     private int panelWidth;
     private int panelHeight;
 	
-    private String[] functions = new String[10];
-	private int functCounter;
+    private ArrayList<String> functions = new ArrayList<>();
 	private Calculator calculator = new Calculator();
 
 	private Point mousePressingPoint;
@@ -61,32 +60,13 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	}
 
 	public void addFunction(String function) {
-		if(functCounter < 10){
-			functions[functCounter] = function;
-			functCounter++;
-		}
-		else{
-			functions[0] = function;
-			functCounter = 0;
-		}
+		functions.add(function);
 		tPool.execute(this);
-	}
-
-	public String[] getFunctions() {
-		return functions;
 	}
 	
-	public void setFunctions(String[] functions) {
-		if (functions.length <= 10) {
-			this.functions = functions;
-			tPool.execute(this);
-		}
-	}
-
-	public void resetFunctions() {
-		functions = new String[10];
+	public void removeFunction(int index) {
+		functions.remove(index);
 		tPool.execute(this);
-		ValueChanged();
 	}
 	
 	public Path2D[] getFunctionPaths() {
@@ -185,6 +165,8 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 	public void setFontMetrics(FontMetrics fontMetrics) {
 		this.fontMetrics = fontMetrics;
 		
+		unitPoints = new ArrayList<UnitLocation>();
+		
 		calculateXUnits();
 		calculateYUnits();
 	}
@@ -193,16 +175,16 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		return colors;
 	}
 
-	public Path2D[] evaluateFunctions(String[] functions) {
+	public Path2D[] evaluateFunctions(ArrayList<String> functions) {
 		Path2D[] functionPathsIntern = new Path2D[10];
 		double difference = (double) (xMax - xMin) / panelWidth;
-		for (int i = 0; i < functions.length; i++) {
-			if (functions[i] != null) {
-				if (calculator.setTerm(functions[i])) {
-					functionPathsIntern[i] = new Path2D.Double();
-					functionPathsIntern[i].moveTo(0, yToPixel(calculator.calculateValue(xMin)));
+		for (String function: functions) {
+			if (function != null) {
+				if (calculator.setTerm(function)) {
+					functionPathsIntern[functions.indexOf(function)] = new Path2D.Double();
+					functionPathsIntern[functions.indexOf(function)].moveTo(0, yToPixel(calculator.calculateValue(xMin)));
 					for (int j = 1; j < panelWidth; j++) {
-						functionPathsIntern[i].lineTo(j, yToPixel(calculator.calculateValue(xMin + j * difference)));
+						functionPathsIntern[functions.indexOf(function)].lineTo(j, yToPixel(calculator.calculateValue(xMin + j * difference)));
 					}
 				}
 			}
@@ -240,24 +222,21 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 		mousePressingPoint = newPoint;
 		
-		unitPoints = new ArrayList<UnitLocation>();
-		
 		tPool.execute(this);
 	}
 
 	public void calculateXYAfterWheel(MouseWheelEvent e) {
 		double scale = e.getPreciseWheelRotation() * 0.05;
-		double diff = (this.xMax - this.xMin) * scale;
-		double xMinDiff = diff * ((pixelToX(e.getX()) - this.xMin) / (this.xMax - this.xMin));
-		double xMaxDiff = diff * ((pixelToX(panelWidth - e.getX()) - this.xMin) / (this.xMax - this.xMin));
-		double yMinDiff = diff * ((pixelToY(panelHeight - e.getY()) - this.yMax) / (this.yMax - this.yMin));
-		double yMaxDiff = diff * ((pixelToY(e.getY()) - this.yMax) / (this.yMax - this.yMin));
+		double xDiff = (this.xMax - this.xMin) * scale;
+		double yDiff = (this.yMax - this.yMin) * scale;
+		double xMinDiff = xDiff * ((pixelToX(e.getX()) - this.xMin) / (this.xMax - this.xMin));
+		double xMaxDiff = xDiff * ((pixelToX(panelWidth - e.getX()) - this.xMin) / (this.xMax - this.xMin));
+		double yMinDiff = yDiff * ((pixelToY(panelHeight - e.getY()) - this.yMax) / (this.yMax - this.yMin));
+		double yMaxDiff = yDiff * ((pixelToY(e.getY()) - this.yMax) / (this.yMax - this.yMin));
 		this.xMin -= xMinDiff;
 		this.xMax += xMaxDiff;
 		this.yMin += yMinDiff;
 		this.yMax -= yMaxDiff;
-		
-		unitPoints = new ArrayList<UnitLocation>();
 
 		tPool.execute(this);
 	}
