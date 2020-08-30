@@ -102,7 +102,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 
 		tfFunctionInput = new JTextField();
 		tfFunctionInput.setBounds(400, 350, 310, 23);
-		tfFunctionInput.setName("tpFunctionInput");
+		tfFunctionInput.setName("tfFunctionInput");
 		tfFunctionInput.addKeyListener(controller);
 		contentPane.add(tfFunctionInput);
 
