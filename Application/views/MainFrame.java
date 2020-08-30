@@ -191,18 +191,17 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		if (model.getShowInfoDialog()) {
 			this.setEnabled(false);
 			infoDialog.setVisible(true);
-		} else {
-			infoDialog.setVisible(false);
-			this.setEnabled(true);
-			this.setVisible(true);
 		}
 		
 		if(model.getShowErrorDialog()){
 		    this.setEnabled(false);
 		    errorDialog.setContent(model.getErrorDialogInfo());
 		    errorDialog.setVisible(true);
-		} else {
-		    errorDialog.setVisible(false);
+		}
+		
+		if (!model.getShowErrorDialog() && !model.getShowInfoDialog()) {
+			infoDialog.setVisible(false);
+			errorDialog.setVisible(false);
 		    this.setEnabled(true);
 		    this.setVisible(true);
 		}
