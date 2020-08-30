@@ -10,7 +10,7 @@ public class Calculator {
 	}
 
 	public boolean setTerm(String term) {
-		boolean termParsable = parser.checkTerm(term);
+		boolean termParsable = FunctionParser.checkTerm(term);
 
 		if (termParsable) {
 			factors = parser.parse(term);

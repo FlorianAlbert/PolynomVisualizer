@@ -9,9 +9,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.Caret;
 
 import model.MainFrameModel;
 
@@ -32,6 +33,10 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 		case "Entfernen":
 			model.removeFunction();
 			break;
+		case "infoMenuItem":
+			model.openInfoDialog();
+		case "DialogOkButton":
+			model.closeInfoDialog();
 		}
 	}
 
@@ -47,8 +52,8 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (((JTextField) e.getSource()).getName().equals("tfFunctionInput")) {
-			model.setFunctionInput(((JTextField) e.getSource()).getText());
+		if (((Component) e.getSource()).getName().equals("tpFunctionInput")) {
+			model.setFunctionInput(((JTextPane) e.getSource()).getText());
 		} else {
 			String input = ((JTextField) e.getSource()).getText();
 			if (input.matches("-?(\\d+(\\.\\d*)?)?")) {
@@ -72,13 +77,28 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 						System.out.println(ex.getMessage());
 					}
 				}
+			} else {
+				if (!(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)) {
+					int indexToDelete = ((JTextField) e.getSource()).getCaretPosition() - 1;
+					char[] result = new char[input.length() - 1];
+
+					for (int i = 0; i < input.length(); i++) {
+						if (i < indexToDelete) {
+							result[i] = input.toCharArray()[i];
+						} else if (i > indexToDelete) {
+							result[i - 1] = input.toCharArray()[i];
+						}
+					}
+
+					((JTextField) e.getSource()).setText(String.valueOf(result));
+				}
 			}
 		}
 	}
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		model.setSelectedListIndex(e.getFirstIndex());
+		model.setSelectedListIndex(((JList<String>)e.getSource()).getSelectedIndex());
 	}
 
 	@Override

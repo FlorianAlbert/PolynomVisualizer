@@ -16,20 +16,22 @@ import java.util.concurrent.TimeUnit;
 
 public class GraphPanelModel extends SuperModel implements Runnable {
 
-    private double xMin;
-    private double xMax;
-    private double yMin;
-    private double yMax;
+	private double xMin;
+	private double xMax;
+	private double yMin;
+	private double yMax;
 
-    private int panelWidth;
-    private int panelHeight;
+	private int panelWidth;
+	private int panelHeight;
 	
-    private ArrayList<String> functions = new ArrayList<>();
+	private boolean valueSetByGraphPanel;
+
+	private ArrayList<String> functions = new ArrayList<>();
 	private Calculator calculator = new Calculator();
 
 	private Point mousePressingPoint;
 	private int cursorType;
-	
+
 	private ArrayList<UnitLocation> unitPoints = new ArrayList<UnitLocation>();
 	private Path2D[] functionPaths = new Path2D[10];
 
@@ -40,12 +42,11 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
 	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
-	
+
 	public GraphPanelModel(double xMin, double xMax, double yMin, double yMax) {
 		setXYUnits(xMin, xMax, yMin, yMax);
 	}
 
-	
 	public int getCursorType() {
 		return cursorType;
 	}
@@ -63,12 +64,12 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		functions.add(function);
 		tPool.execute(this);
 	}
-	
+
 	public void removeFunction(int index) {
 		functions.remove(index);
 		tPool.execute(this);
 	}
-	
+
 	public Path2D[] getFunctionPaths() {
 		return functionPaths;
 	}
@@ -85,106 +86,116 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		this.panelHeight = height;
 	}
 
-	public int getPanelHeight(){
+	public int getPanelHeight() {
 		return panelHeight;
 	}
 
-	public double getYMax(){
+	public double getYMax() {
 		return yMax;
 	}
-	
-	public void setyMax(double yMax) {
+
+	public void setyMax(double yMax, boolean setByGraphPanel) {
+		this.valueSetByGraphPanel = setByGraphPanel;
 		this.yMax = yMax;
-		if(fontMetrics != null) {
-		calculateYUnits();
+		if (fontMetrics != null) {
+			calculateYUnits();
 		}
 		tPool.execute(this);
 	}
 
-	public double getYMin(){
+	public double getYMin() {
 		return yMin;
 	}
-	
-	public void setyMin(double yMin) {
+
+	public void setyMin(double yMin, boolean setByGraphPanel) {
+		this.valueSetByGraphPanel = setByGraphPanel;
 		this.yMin = yMin;
-		if(fontMetrics != null) {
-		calculateYUnits();
+		if (fontMetrics != null) {
+			calculateYUnits();
 		}
 		tPool.execute(this);
 	}
 
-	public double getXMax(){
+	public double getXMax() {
 		return xMax;
 	}
 
-	public void setxMax(double xMax) {
+	public void setxMax(double xMax, boolean setByGraphPanel) {
+		this.valueSetByGraphPanel = setByGraphPanel;
 		this.xMax = xMax;
-		
-		if(fontMetrics != null) {
-		calculateXUnits();
+
+		if (fontMetrics != null) {
+			calculateXUnits();
 		}
-		
+
 		tPool.execute(this);
 	}
 
-	public double getXMin(){
+	public double getXMin() {
 		return xMin;
 	}
-	
-	public void setxMin(double xMin) {
+
+	public void setxMin(double xMin, boolean setByGraphPanel) {
+		this.valueSetByGraphPanel = setByGraphPanel;
 		this.xMin = xMin;
-		
-		if(fontMetrics != null) {
-		calculateXUnits();
+
+		if (fontMetrics != null) {
+			calculateXUnits();
 		}
-		
+
 		tPool.execute(this);
 	}
-	
+
 	public void setXYUnits(double xMin, double xMax, double yMin, double yMax) {
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
 
-		if(fontMetrics != null) {
-		calculateXUnits();
-		calculateYUnits();
+		if (fontMetrics != null) {
+			calculateXUnits();
+			calculateYUnits();
 		}
 		tPool.execute(this);
 	}
-	
+
 	public ArrayList<UnitLocation> getUnitPoints() {
 		return unitPoints;
 	}
-	
+
 	public FontMetrics getFontMetrics() {
 		return fontMetrics;
 	}
 
 	public void setFontMetrics(FontMetrics fontMetrics) {
 		this.fontMetrics = fontMetrics;
-		
+
 		unitPoints = new ArrayList<UnitLocation>();
-		
+
 		calculateXUnits();
 		calculateYUnits();
 	}
-	
+
 	public Color[] getColors() {
 		return colors;
+	}
+
+	public boolean isValueSetByGraphPanel() {
+		return valueSetByGraphPanel;
 	}
 
 	public Path2D[] evaluateFunctions(ArrayList<String> functions) {
 		Path2D[] functionPathsIntern = new Path2D[10];
 		double difference = (double) (xMax - xMin) / panelWidth;
-		for (String function: functions) {
+		for (String function : functions) {
 			if (function != null) {
 				if (calculator.setTerm(function)) {
 					functionPathsIntern[functions.indexOf(function)] = new Path2D.Double();
-					functionPathsIntern[functions.indexOf(function)].moveTo(0, yToPixel(calculator.calculateValue(xMin)));
+					functionPathsIntern[functions.indexOf(function)].moveTo(0,
+							yToPixel(calculator.calculateValue(xMin)));
 					for (int j = 1; j < panelWidth; j++) {
-						functionPathsIntern[functions.indexOf(function)].lineTo(j, yToPixel(calculator.calculateValue(xMin + j * difference)));
+						functionPathsIntern[functions.indexOf(function)].lineTo(j,
+								yToPixel(calculator.calculateValue(xMin + j * difference)));
 					}
 				}
 			}
@@ -196,19 +207,19 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		return xMin + pixelX * (xMax - xMin) / panelWidth;
 	}
 
-	public double pixelToY(int pixelY) { 
-		return yMax - pixelY * (yMax - yMin) / panelHeight; 
+	public double pixelToY(int pixelY) {
+		return yMax - pixelY * (yMax - yMin) / panelHeight;
 
 	}
 
-	public int xToPixel(double x) { 
+	public int xToPixel(double x) {
 		return (int) ((x - xMin) / (xMax - xMin) * panelWidth);
 	}
 
 	public int yToPixel(double y) {
 		return panelHeight - (int) ((y - yMin) / (yMax - yMin) * panelHeight);
 	}
-	
+
 	public void calculateXYAfterMoving(Point newPoint) {
 		int xDifference = mousePressingPoint.x - newPoint.x;
 		int yDifference = mousePressingPoint.y - newPoint.y;
@@ -222,6 +233,8 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 		mousePressingPoint = newPoint;
 		
+		valueSetByGraphPanel = true;
+
 		tPool.execute(this);
 	}
 
@@ -237,6 +250,8 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		this.xMax += xMaxDiff;
 		this.yMin += yMinDiff;
 		this.yMax -= yMaxDiff;
+		
+		valueSetByGraphPanel = true;
 
 		tPool.execute(this);
 	}
@@ -262,25 +277,26 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 				if (xToPixel(0) - 2 * lengthDifference - 10 > 0) {
 					if (xToPixel(0) <= getPanelWidth()) {
-						unitPoint.setValLocation(new Point(xToPixel(0) - lengthDifference - 12, y + fontMetrics.getDescent()));
+						unitPoint.setValLocation(
+								new Point(xToPixel(0) - lengthDifference - 12, y + fontMetrics.getDescent()));
 					} else {
-						unitPoint.setValLocation(new Point(getPanelWidth() - lengthDifference - 12,
-								y + fontMetrics.getDescent()));
+						unitPoint.setValLocation(
+								new Point(getPanelWidth() - lengthDifference - 12, y + fontMetrics.getDescent()));
 					}
 				} else {
 					if (xToPixel(0) >= 0) {
-						unitPoint.setValLocation(new Point(xToPixel(0) + 12, y + fontMetrics.getDescent()));						
+						unitPoint.setValLocation(new Point(xToPixel(0) + 12, y + fontMetrics.getDescent()));
 					} else {
-						unitPoint.setValLocation(new Point(12, y + fontMetrics.getDescent()));	
+						unitPoint.setValLocation(new Point(12, y + fontMetrics.getDescent()));
 					}
 				}
 				unitPoints.add(unitPoint);
 			}
 		}
-	}	
+	}
 
-	private void calculateXUnits() { 
-		int yneg = yToPixel(0) - 3; 
+	private void calculateXUnits() {
+		int yneg = yToPixel(0) - 3;
 		int ypos = yToPixel(0) + 3;
 
 		int help = (int) ((yMax - yMin) / 6 + 1);
@@ -301,15 +317,15 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 				if (yToPixel(0) >= getPanelHeight() - heightDifference - 15) {
 					if (yToPixel(0) >= getPanelHeight()) {
-						unitPoint.setValLocation(new Point( x - middleDifference, getPanelHeight() - 10));
+						unitPoint.setValLocation(new Point(x - middleDifference, getPanelHeight() - 10));
 					} else {
-						unitPoint.setValLocation(new Point( x - middleDifference, yToPixel(0) - 10));
+						unitPoint.setValLocation(new Point(x - middleDifference, yToPixel(0) - 10));
 					}
 				} else {
 					if (yToPixel(0) >= 0) {
-						unitPoint.setValLocation(new Point( x - middleDifference, yToPixel(0) + 10 + heightDifference));
+						unitPoint.setValLocation(new Point(x - middleDifference, yToPixel(0) + 10 + heightDifference));
 					} else {
-						unitPoint.setValLocation(new Point( x - middleDifference, 10 + heightDifference));
+						unitPoint.setValLocation(new Point(x - middleDifference, 10 + heightDifference));
 					}
 				}
 				unitPoints.add(unitPoint);
@@ -322,7 +338,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		synchronized (this) {
 			functionPaths = evaluateFunctions(functions);
 		}
-		
+
 		ValueChanged();
 	}
 }
