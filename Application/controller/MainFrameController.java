@@ -37,17 +37,20 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 			model.openInfoDialog();
 		case "DialogOkButton":
 			model.closeInfoDialog();
+		    
 		}
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-
+	    
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-
+	    if(((Component) e.getSource()).getName().equals("tpFunctionInput") && e.getKeyCode() == KeyEvent.VK_ENTER) {
+		model.addFunction();
+	    }
 	}
 
 	@Override
