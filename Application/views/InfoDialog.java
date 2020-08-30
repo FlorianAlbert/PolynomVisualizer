@@ -27,6 +27,7 @@ public class InfoDialog extends JDialog {
 		this.controller = controller;
 		
 		setTitle("\u00DCber PolyFunctionVisualizer");
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(InfoDialog.class.getResource("/views/ausruf.png")));
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());

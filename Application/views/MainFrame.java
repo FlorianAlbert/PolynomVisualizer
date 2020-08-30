@@ -194,6 +194,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		} else {
 			infoDialog.setVisible(false);
 			this.setEnabled(true);
+			this.setVisible(true);
 		}
 
 		tpFunctionInput.setText(model.getFunctionInputView());
