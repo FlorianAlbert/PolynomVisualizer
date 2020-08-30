@@ -8,9 +8,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.html.parser.ParserDelegator;
 
 import controller.MainFrameController;
 import model.GraphPanelModel;
@@ -34,7 +34,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 	private MainFrameController controller;
 
 	private JPanel contentPane;
-	private JTextPane tpFunctionInput;
+	private JTextField tfFunctionInput;
 	private JTextField tfXMin;
 	private JTextField tfXMax;
 	private JTextField tfYMin;
@@ -72,7 +72,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 838, 450);
+		setBounds(100, 100, 838, 439);
 		setResizable(false);
 
 		JMenuBar menuBar = new JMenuBar();
@@ -99,23 +99,20 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		panel.setBackground(Color.WHITE);
 		contentPane.add(panel);
 
-		tpFunctionInput = new JTextPane();
-		tpFunctionInput.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		tpFunctionInput.setContentType("text/html");
-		tpFunctionInput.setText("<html>\n\r  <head>\n\r    \n\r  </head>\n\r  <body>\n\r  </body>\n\r</html>");
-		tpFunctionInput.setBounds(400, 350, 310, 34);
-		tpFunctionInput.setName("tpFunctionInput");
-		tpFunctionInput.addKeyListener(controller);
-		contentPane.add(tpFunctionInput);
+		tfFunctionInput = new JTextField();
+		tfFunctionInput.setBounds(400, 350, 310, 23);
+		tfFunctionInput.setName("tpFunctionInput");
+		tfFunctionInput.addKeyListener(controller);
+		contentPane.add(tfFunctionInput);
 
 		btnInsert = new JButton("Bestätigen");
-		btnInsert.setBounds(720, 351, 98, 34);
+		btnInsert.setBounds(720, 351, 98, 23);
 		btnInsert.setName("Bestätigen");
 		btnInsert.addActionListener(controller);
 		contentPane.add(btnInsert);
 
 		btnDelete = new JButton("Entfernen");
-		btnDelete.setBounds(10, 351, 237, 34);
+		btnDelete.setBounds(10, 351, 237, 23);
 		btnDelete.setName("Entfernen");
 		btnDelete.addActionListener(controller);
 		contentPane.add(btnDelete);
@@ -198,7 +195,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 			this.setVisible(true);
 		}
 
-		tpFunctionInput.setText(model.getFunctionInputView());
+		tfFunctionInput.setText(model.getFunctionInput());
 
 		btnInsert.setEnabled(!model.getFunctionInput().isBlank());
 		btnDelete.setEnabled(list.getSelectedIndex() != -1);

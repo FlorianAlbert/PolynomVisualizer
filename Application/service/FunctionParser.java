@@ -5,8 +5,8 @@ public class FunctionParser {
 	private double[] factors;
 
 	public static boolean checkTerm(String term) {
-		boolean termIsValid = term
-				.matches("[+-]?\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^[+-]?\\d+)?))|((?<=\\d)(([xX](\\^[+-]?\\d+)?)?)))([+-]\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^[+-]?\\d+)?))|((?<=\\d)(([xX](\\^[+-]?\\d+)?)?))))*");
+		boolean termIsValid = term.matches(
+				"[+-]?\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^\\+?\\d+)?))|((?<=\\d)(([xX](\\^\\+?\\d+)?)?)))([+-]\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^\\+?\\d+)?))|((?<=\\d)(([xX](\\^\\+?\\d+)?)?))))*");
 
 		return termIsValid;
 	}
