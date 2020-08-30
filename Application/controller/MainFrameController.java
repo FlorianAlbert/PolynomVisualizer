@@ -27,7 +27,7 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 	public void actionPerformed(ActionEvent e) {
 		switch (((Component) e.getSource()).getName()) {
 		case "Bestätigen":
-			model.addFunction();
+			model.addFunction(true);
 			break;
 		case "Entfernen":
 			model.removeFunction();
@@ -37,25 +37,25 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 			break;
 		case "DialogOkButton":
 			model.closeInfoDialog();
-		    
+
 		}
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-	    
+
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-	    if(((Component) e.getSource()).getName().equals("tpFunctionInput") && e.getKeyCode() == KeyEvent.VK_ENTER) {
-		model.addFunction();
-	    }
+		if (((Component) e.getSource()).getName().equals("tfFunctionInput") && e.getKeyCode() == KeyEvent.VK_ENTER) {
+			model.addFunction(false);
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (((Component) e.getSource()).getName().equals("tpFunctionInput")) {
+		if (((Component) e.getSource()).getName().equals("tfFunctionInput")) {
 			model.setFunctionInput(((JTextField) e.getSource()).getText());
 		} else {
 			String input = ((JTextField) e.getSource()).getText();
@@ -101,7 +101,7 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		model.setSelectedListIndex(((JList<String>)e.getSource()).getSelectedIndex());
+		model.setSelectedListIndex(((JList<String>) e.getSource()).getSelectedIndex());
 	}
 
 	@Override

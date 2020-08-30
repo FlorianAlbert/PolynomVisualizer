@@ -20,13 +20,17 @@ public class MainFrameModel extends SuperModel {
 	private boolean showInfoDialog;
 
 	private boolean isInputFunctionChanged = false;
+	
+	private boolean isInputAddedByButton;
 
 	public void setFunctionInput(String functionInput) {
 		this.functionInput = functionInput;
 		ValueChanged();
 	}
 
-	public void addFunction() {
+	public void addFunction(boolean isInputAddedByButton) {
+		this.isInputAddedByButton = isInputAddedByButton;
+		
 		if (FunctionParser.checkTerm(functionInput)) {
 			if (listModel.getSize() < 10) {
 				graphPanelModel.addFunction(functionInput);
@@ -171,5 +175,13 @@ public class MainFrameModel extends SuperModel {
 
 	public void setIsInputFunctionChanged(boolean isInputFunctionChanged) {
 		this.isInputFunctionChanged = isInputFunctionChanged;
+	}
+
+	public boolean isInputAddedByButton() {
+		return isInputAddedByButton;
+	}
+
+	public void setIsInputAddedByButton(boolean isInputAddedByButton) {
+		this.isInputAddedByButton = isInputAddedByButton;
 	}
 }

@@ -101,7 +101,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 
 		tfFunctionInput = new JTextField();
 		tfFunctionInput.setBounds(400, 350, 310, 23);
-		tfFunctionInput.setName("tpFunctionInput");
+		tfFunctionInput.setName("tfFunctionInput");
 		tfFunctionInput.addKeyListener(controller);
 		contentPane.add(tfFunctionInput);
 
@@ -193,6 +193,11 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 			infoDialog.setVisible(false);
 			this.setEnabled(true);
 			this.setVisible(true);
+		}
+		
+		if (model.isInputAddedByButton()) {
+			tfFunctionInput.requestFocus();
+			model.setIsInputAddedByButton(false);
 		}
 
 		tfFunctionInput.setText(model.getFunctionInput());
