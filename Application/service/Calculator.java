@@ -9,6 +9,16 @@ public class Calculator {
 		parser = new FunctionParser();
 	}
 
+	public boolean setTerm(String term) {
+		boolean termParsable = FunctionParser.checkTerm(term);
+
+		if (termParsable) {
+			factors = parser.parse(term);
+		}
+
+		return termParsable;
+	}
+
 	public double calculateValue(double input) {
 		double result = factors[factors.length - 1];
 
@@ -18,16 +28,4 @@ public class Calculator {
 
 		return result;
 	}
-
-	public boolean setTerm(String term) {
-		boolean termParsable = parser.checkTerm(term);
-
-		if (termParsable) {
-			factors = parser.parse(term);
-		}
-
-		return termParsable;
-	}
-	
-	
 }

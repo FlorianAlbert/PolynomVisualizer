@@ -4,6 +4,13 @@ public class FunctionParser {
 
 	private double[] factors;
 
+	public static boolean checkTerm(String term) {
+		boolean termIsValid = term.matches(
+				"[+-]?\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^\\+?\\d+)?))|((?<=\\d)(([xX](\\^\\+?\\d+)?)?)))([+-]\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^\\+?\\d+)?))|((?<=\\d)(([xX](\\^\\+?\\d+)?)?))))*");
+
+		return termIsValid;
+	}
+
 	public double[] parse(String term) {
 		factors = new double[getDegreeOfTerm(term) + 1];
 
@@ -146,13 +153,6 @@ public class FunctionParser {
 		factors[exponent] += factor;
 
 		return factors;
-	}
-
-	public boolean checkTerm(String term) {
-		boolean termIsValid = term
-				.matches("[+-]?\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^[+-]?\\d+)?))|((?<=\\d)(([xX](\\^[+-]?\\d+)?)?)))([+-]\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^[+-]?\\d+)?))|((?<=\\d)(([xX](\\^[+-]?\\d+)?)?))))*");
-
-		return termIsValid;
 	}
 
 	private int getDegreeOfTerm(String term) {
