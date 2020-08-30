@@ -23,7 +23,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	private int panelWidth;
 	private int panelHeight;
-	
+
 	private boolean valueSetByGraphPanel;
 
 	private ArrayList<String> functions = new ArrayList<>();
@@ -232,7 +232,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		yMax += y;
 
 		mousePressingPoint = newPoint;
-		
+
 		valueSetByGraphPanel = true;
 
 		tPool.execute(this);
@@ -250,7 +250,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		this.xMax += xMaxDiff;
 		this.yMin += yMinDiff;
 		this.yMax -= yMaxDiff;
-		
+
 		valueSetByGraphPanel = true;
 
 		tPool.execute(this);
@@ -340,5 +340,6 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		}
 
 		ValueChanged();
+
 	}
 }

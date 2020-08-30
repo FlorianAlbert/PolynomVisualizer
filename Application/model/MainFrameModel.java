@@ -1,15 +1,8 @@
 package model;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
+import java.awt.Color;
 
 import javax.swing.DefaultListModel;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.parser.ParserDelegator;
 
 import service.FunctionParser;
 import service.SuperModel;
@@ -18,7 +11,6 @@ public class MainFrameModel extends SuperModel {
 
 	private GraphPanelModel graphPanelModel;
 
-	private String functionInputView = "";
 	private String functionInput = "";
 
 	private int selectedListIndex;
@@ -27,42 +19,10 @@ public class MainFrameModel extends SuperModel {
 
 	private boolean showInfoDialog;
 
-	public String getFunctionInputView() {
-		return functionInputView;
-	}
+	private boolean isInputFunctionChanged = false;
 
 	public void setFunctionInput(String functionInput) {
-		String[] newAndOldParts = functionInput.split("\\^");
-		String result = newAndOldParts[0];
-
-		if (newAndOldParts.length == 2) {
-			String newChar = newAndOldParts[1].substring(0, 1);
-			newAndOldParts[1] = newAndOldParts[1].substring(1, newAndOldParts[1].length());
-			result = result.concat("<sup>").concat(newChar).concat("</sup>").concat(newAndOldParts[1]);
-		} else {
-			String[] inputAndRest = functionInput.split("</body>");
-			inputAndRest[0].trim();
-
-			if (inputAndRest[0].substring(0, inputAndRest[0].length()).trim().endsWith("-</sup>")
-					|| inputAndRest[0].substring(0, inputAndRest[0].length()).trim().endsWith("+</sup>")) {
-				inputAndRest[0] = inputAndRest[0].replace("-</sup>", "</sup>-");
-				inputAndRest[0] = inputAndRest[0].replace("+</sup>", "</sup>+");
-				result = inputAndRest[0].concat(inputAndRest[1]);
-			}
-		}
-
-		this.functionInputView = result;
-
-		Reader reader = new StringReader(this.functionInputView);
-		HTMLEditorKit.Parser parser = new ParserDelegator();
-		try {
-			this.functionInput = "";
-			parser.parse(reader, new HTMLParser(), true);
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		this.functionInput = functionInput;
 		ValueChanged();
 	}
 
@@ -70,28 +30,71 @@ public class MainFrameModel extends SuperModel {
 		if (FunctionParser.checkTerm(functionInput)) {
 			if (listModel.getSize() < 10) {
 				graphPanelModel.addFunction(functionInput);
-				functionInputView = functionInputView.replace("<body>",
-						"<body style=\"color: #" + Integer
-								.toHexString(graphPanelModel.getColors()[listModel.getSize()].getRGB()).substring(2)
-								+ "\">");
+
+				Color currentColor = graphPanelModel.getColors()[listModel.getSize()];
+				String[] parts = functionInput.split("\\^");
+				String functionInputView = "<html><body style=\"color: rgb(" 
+				+ currentColor.getRed() + ", " + currentColor.getGreen() + ", " + currentColor.getBlue() + ");\">f(x) = "
+						+ parts[0];
+				for (int i = 1; i < parts.length; i++) {
+					int endIndexPlus;
+					int endIndexMinus;
+					if (parts[i].startsWith("+")) {
+						endIndexPlus = parts[i].indexOf("+", 1);
+						endIndexMinus = parts[i].indexOf("-");
+					} else {
+						endIndexPlus = parts[i].indexOf("+");
+						endIndexMinus = parts[i].indexOf("-");
+					}
+
+					int actualEndIndex;
+					if (endIndexPlus >= 0 && endIndexMinus >= 0) {
+						actualEndIndex = Math.min(endIndexPlus, endIndexMinus);
+					} else {
+						actualEndIndex = Math.max(endIndexPlus, endIndexMinus);
+					}
+
+					if (actualEndIndex >= 0) {
+						functionInputView = functionInputView.concat("<sup>")
+								.concat(parts[i].substring(0, actualEndIndex)).concat("</sup>")
+								.concat(parts[i].substring(actualEndIndex, parts[i].length()));
+					} else {
+						functionInputView = functionInputView.concat("<sup>")
+								.concat(parts[i]).concat("</sup>");
+					}
+				}
+				
+				functionInputView = functionInputView.concat("</body></html>");
+
 				listModel.add(listModel.getSize(), functionInputView);
-				functionInputView = "<html>\n\r  <head>\n\r    \n\r  </head>\n\r  <body>\n\r  </body>\n\r</html>";
 				functionInput = "";
 			} else {
 				// Warnmeldung ausgeben
 			}
 		} else {
 			// Fehlermeldung
-			functionInputView = "<html>\n\r  <head>\n\r    \n\r  </head>\n\r  <body>\n\r  </body>\n\r</html>";
 			functionInput = "";
 		}
 
+		isInputFunctionChanged = true;
 		ValueChanged();
 	}
 
 	public void removeFunction() {
 		graphPanelModel.removeFunction(selectedListIndex);
 		listModel.remove(selectedListIndex);
+		
+		int limit = listModel.getSize();
+		for (int i = 0; i < limit; i++) {
+			String entry = listModel.get(i);
+			listModel.remove(i);
+			String oldRGB = entry.substring(entry.indexOf("("), entry.indexOf(")") + 1);
+			Color newColor = graphPanelModel.getColors()[i];
+			String newRGB = "(" + newColor.getRed() + ", " + newColor.getGreen() + ", " + newColor.getBlue() + ")";
+			entry = entry.replace(oldRGB, newRGB);
+			listModel.add(i, entry);
+		}
+		
 		ValueChanged();
 	}
 
@@ -162,32 +165,11 @@ public class MainFrameModel extends SuperModel {
 		return showInfoDialog;
 	}
 
-	private class HTMLParser extends HTMLEditorKit.ParserCallback {
-		private boolean encounteredAnExponent = false;
-		private boolean encounteredAFunction = false;
-
-		public void handleText(char[] data, int pos) {
-			if (encounteredAFunction) {
-				if (encounteredAnExponent) {
-					functionInput = functionInput.concat("^");
-				}
-				functionInput = functionInput.concat(String.valueOf(data));
-			}
-		}
-
-		public void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
-			if (t == HTML.Tag.SUP)
-				encounteredAnExponent = true;
-			if (t == HTML.Tag.BODY)
-				encounteredAFunction = true;
-		}
-
-		public void handleEndTag(HTML.Tag t, int pos) {
-			if (t == HTML.Tag.SUP)
-				encounteredAnExponent = false;
-			if (t == HTML.Tag.BODY)
-				encounteredAFunction = false;
-		}
+	public boolean isInputFunctionChanged() {
+		return isInputFunctionChanged;
 	}
 
+	public void setIsInputFunctionChanged(boolean isInputFunctionChanged) {
+		this.isInputFunctionChanged = isInputFunctionChanged;
+	}
 }

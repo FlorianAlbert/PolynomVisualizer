@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -54,7 +53,7 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (((Component) e.getSource()).getName().equals("tpFunctionInput")) {
-			model.setFunctionInput(((JTextPane) e.getSource()).getText());
+			model.setFunctionInput(((JTextField) e.getSource()).getText());
 		} else {
 			String input = ((JTextField) e.getSource()).getText();
 			if (input.matches("-?(\\d+(\\.\\d*)?)?")) {
