@@ -40,7 +40,7 @@ public class MainFrameModel extends SuperModel {
 			newAndOldParts[1] = newAndOldParts[1].substring(1, newAndOldParts[1].length());
 			result = result.concat("<sup>").concat(newChar).concat("</sup>").concat(newAndOldParts[1]);
 		} else {
-			String[] inputAndRest = functionInput.split("</p>");
+			String[] inputAndRest = functionInput.split("</body>");
 			inputAndRest[0].trim();
 
 			if (inputAndRest[0].substring(0, inputAndRest[0].length()).trim().endsWith("-</sup>")
@@ -70,15 +70,19 @@ public class MainFrameModel extends SuperModel {
 		if (FunctionParser.checkTerm(functionInput)) {
 			if (listModel.getSize() < 10) {
 				graphPanelModel.addFunction(functionInput);
+				functionInputView = functionInputView.replace("<body>",
+						"<body style=\"color: #" + Integer
+								.toHexString(graphPanelModel.getColors()[listModel.getSize()].getRGB()).substring(2)
+								+ "\">");
 				listModel.add(listModel.getSize(), functionInputView);
-				functionInputView = "";
+				functionInputView = "<html>\n\r  <head>\n\r    \n\r  </head>\n\r  <body>\n\r  </body>\n\r</html>";
 				functionInput = "";
 			} else {
 				// Warnmeldung ausgeben
 			}
 		} else {
 			// Fehlermeldung
-			functionInputView = "<html></html>";
+			functionInputView = "<html>\n\r  <head>\n\r    \n\r  </head>\n\r  <body>\n\r  </body>\n\r</html>";
 			functionInput = "";
 		}
 
@@ -153,7 +157,7 @@ public class MainFrameModel extends SuperModel {
 	public String getFunctionInput() {
 		return functionInput;
 	}
-	
+
 	public boolean getShowInfoDialog() {
 		return showInfoDialog;
 	}
@@ -174,14 +178,14 @@ public class MainFrameModel extends SuperModel {
 		public void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
 			if (t == HTML.Tag.SUP)
 				encounteredAnExponent = true;
-			if (t == HTML.Tag.P)
+			if (t == HTML.Tag.BODY)
 				encounteredAFunction = true;
 		}
 
 		public void handleEndTag(HTML.Tag t, int pos) {
 			if (t == HTML.Tag.SUP)
 				encounteredAnExponent = false;
-			if (t == HTML.Tag.P)
+			if (t == HTML.Tag.BODY)
 				encounteredAFunction = false;
 		}
 	}
