@@ -35,6 +35,7 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 			break;
 		case "infoMenuItem":
 			model.openInfoDialog();
+			break;
 		case "DialogOkButton":
 			model.closeInfoDialog();
 		    

@@ -46,7 +46,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 	JList<String> list;
 	private JMenu helpMenu;
 	private JMenuItem infoMenuItem;
-	
+
 	private InfoDialog infoDialog;
 
 	public static void main(String[] args) {
@@ -74,19 +74,19 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 838, 450);
 		setResizable(false);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		setJMenuBar(menuBar);
-		
+
 		helpMenu = new JMenu("Hilfe");
 		menuBar.add(helpMenu);
-		
+
 		infoMenuItem = new JMenuItem("Info");
 		infoMenuItem.setName("infoMenuItem");
 		infoMenuItem.addActionListener(controller);
 		helpMenu.add(infoMenuItem);
-		
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -102,6 +102,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		tpFunctionInput = new JTextPane();
 		tpFunctionInput.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		tpFunctionInput.setContentType("text/html");
+		tpFunctionInput.setText("<html>\n\r  <head>\n\r    \n\r  </head>\n\r  <body>\n\r  </body>\n\r</html>");
 		tpFunctionInput.setBounds(400, 350, 310, 34);
 		tpFunctionInput.setName("tpFunctionInput");
 		tpFunctionInput.addKeyListener(controller);
@@ -172,7 +173,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		tfYMax.addKeyListener(controller);
 		tfYMax.addMouseListener(controller);
 		contentPane.add(tfYMax);
-		
+
 		infoDialog = new InfoDialog(controller);
 
 		graphPanelModel.addValueChangedListener(panel);
@@ -187,18 +188,19 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 			tfYMin.setText(Double.toString((double) Math.round(model.getYMin() * 1000) / 1000));
 			tfYMax.setText(Double.toString((double) Math.round(model.getYMax() * 1000) / 1000));
 		}
-		
+
 		if (model.getShowInfoDialog()) {
 			this.setEnabled(false);
 			infoDialog.setVisible(true);
 		} else {
 			infoDialog.setVisible(false);
 			this.setEnabled(true);
+			this.setVisible(true);
 		}
 
 		tpFunctionInput.setText(model.getFunctionInputView());
 
-		btnInsert.setEnabled(!model.getFunctionInput().matches("\u0020*"));
+		btnInsert.setEnabled(!model.getFunctionInput().isBlank());
 		btnDelete.setEnabled(list.getSelectedIndex() != -1);
 	}
 }
