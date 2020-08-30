@@ -37,7 +37,9 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 			break;
 		case "DialogOkButton":
 			model.closeInfoDialog();
-		    
+			break;
+		case "ErrorDialogOkButton":
+		    	model.closeErrorDialog();
 		}
 	}
 

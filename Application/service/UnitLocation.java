@@ -4,7 +4,7 @@ import java.awt.Point;
 
 public class UnitLocation {
 
-	private Point neg;
+    	private Point neg;
     private Point pos;
     private Point valLocation;
     private int value;

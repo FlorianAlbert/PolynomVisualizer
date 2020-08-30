@@ -48,6 +48,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 	private JMenuItem infoMenuItem;
 
 	private InfoDialog infoDialog;
+	private ErrorDialog errorDialog;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -172,6 +173,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		contentPane.add(tfYMax);
 
 		infoDialog = new InfoDialog(controller);
+		errorDialog = new ErrorDialog(controller);
 
 		graphPanelModel.addValueChangedListener(panel);
 		graphPanelModel.addValueChangedListener(this);
@@ -193,6 +195,16 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 			infoDialog.setVisible(false);
 			this.setEnabled(true);
 			this.setVisible(true);
+		}
+		
+		if(model.getShowErrorDialog()){
+		    this.setEnabled(false);
+		    errorDialog.setContent(model.getErrorDialogInfo());
+		    errorDialog.setVisible(true);
+		} else {
+		    errorDialog.setVisible(false);
+		    this.setEnabled(true);
+		    this.setVisible(true);
 		}
 
 		tfFunctionInput.setText(model.getFunctionInput());

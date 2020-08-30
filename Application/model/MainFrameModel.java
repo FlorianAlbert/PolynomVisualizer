@@ -12,12 +12,16 @@ public class MainFrameModel extends SuperModel {
 	private GraphPanelModel graphPanelModel;
 
 	private String functionInput = "";
+	
+	private String errorDialogInfo;
 
 	private int selectedListIndex;
 
 	private DefaultListModel<String> listModel = new DefaultListModel<>();
 
 	private boolean showInfoDialog;
+	
+	private boolean showErrorDialog;
 
 	private boolean isInputFunctionChanged = false;
 
@@ -69,10 +73,12 @@ public class MainFrameModel extends SuperModel {
 				listModel.add(listModel.getSize(), functionInputView);
 				functionInput = "";
 			} else {
-				// Warnmeldung ausgeben
+				errorDialogInfo = "Sie k\u00f6nnen maximal zehn Funktionen eingeben.";
+				showErrorDialog = true;
 			}
 		} else {
-			// Fehlermeldung
+		    	errorDialogInfo = "Die eingegebene Funktion ist nicht korrekt.";
+			showErrorDialog = true;
 			functionInput = "";
 		}
 
@@ -105,6 +111,16 @@ public class MainFrameModel extends SuperModel {
 
 	public void closeInfoDialog() {
 		showInfoDialog = false;
+		ValueChanged();
+	}
+	
+	public void openErrorDialog() {
+		showErrorDialog = true;
+		ValueChanged();
+	}
+
+	public void closeErrorDialog() {
+		showErrorDialog = false;
 		ValueChanged();
 	}
 
@@ -164,6 +180,10 @@ public class MainFrameModel extends SuperModel {
 	public boolean getShowInfoDialog() {
 		return showInfoDialog;
 	}
+	
+	public boolean getShowErrorDialog() {
+	    return showErrorDialog;
+	}
 
 	public boolean isInputFunctionChanged() {
 		return isInputFunctionChanged;
@@ -171,5 +191,9 @@ public class MainFrameModel extends SuperModel {
 
 	public void setIsInputFunctionChanged(boolean isInputFunctionChanged) {
 		this.isInputFunctionChanged = isInputFunctionChanged;
+	}
+	
+	public String getErrorDialogInfo() {
+	    return errorDialogInfo;
 	}
 }
