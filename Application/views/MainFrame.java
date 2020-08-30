@@ -72,7 +72,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 838, 430);
+		setBounds(100, 100, 838, 450);
 		setResizable(false);
 		
 		JMenuBar menuBar = new JMenuBar();
