@@ -206,6 +206,11 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		    this.setEnabled(true);
 		    this.setVisible(true);
 		}
+		
+		if (model.isInputAddedByButton()) {
+			tfFunctionInput.requestFocus();
+			model.setIsInputAddedByButton(false);
+		}
 
 		tfFunctionInput.setText(model.getFunctionInput());
 
