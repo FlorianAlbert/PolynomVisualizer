@@ -3,6 +3,8 @@ package controller;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -15,7 +17,7 @@ import javax.swing.event.ListSelectionListener;
 
 import model.MainFrameModel;
 
-public class MainFrameController implements ActionListener, KeyListener, ListSelectionListener, MouseListener {
+public class MainFrameController implements ActionListener, KeyListener, ListSelectionListener, MouseListener, ComponentListener {
 
 	MainFrameModel model;
 
@@ -39,28 +41,44 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 			model.closeInfoDialog();
 			break;
 		case "ErrorDialogOkButton":
-		    model.closeErrorDialog();
+			model.closeErrorDialog();
+			break;
+		case "btnEnterDerivative":
+			model.addDerivative(true);
 
 		}
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-	    
+
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (((Component) e.getSource()).getName().equals("tfFunctionInput") && e.getKeyCode() == KeyEvent.VK_ENTER) {
-			model.addFunction(false);
+		switch (((Component) e.getSource()).getName()) {
+		case "tfFunctionInput":
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				model.addFunction(false);
+			}
+			break;
+		case "tfNDerivative":
+			if (e.getKeyCode() == KeyEvent.VK_ENTER && !((JTextField)e.getSource()).getText().isBlank()) {
+				model.addDerivative(false);
+			}
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (((Component) e.getSource()).getName().equals("tfFunctionInput")) {
+		switch (((Component) e.getSource()).getName()) {
+		case "tfFunctionInput":
 			model.setFunctionInput(((JTextField) e.getSource()).getText());
-		} else {
+			break;
+		case "tfNDerivative":
+			model.setNDerivativeInput(((JTextField) e.getSource()).getText());
+			break;
+		default:
 			String input = ((JTextField) e.getSource()).getText();
 			if (input.matches("-?(\\d+(\\.\\d*)?)?")) {
 				if (input.matches("-?(\\d+\\.\\d+)?")) {
@@ -143,6 +161,29 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		model.setNDerivativeInput("");
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

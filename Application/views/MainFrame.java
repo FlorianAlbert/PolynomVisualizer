@@ -34,16 +34,21 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 	private MainFrameController controller;
 
 	private JPanel contentPane;
+
+	private JLabel lblDerivative;
+
 	private JTextField tfFunctionInput;
 	private JTextField tfXMin;
 	private JTextField tfXMax;
 	private JTextField tfYMin;
 	private JTextField tfYMax;
+	private JTextField tfNDerivative;
 
 	private JButton btnDelete;
 	private JButton btnInsert;
+	private JButton btnEnterDerivative;
 
-	JList<String> list;
+	private JList<String> list;
 	private JMenu helpMenu;
 	private JMenuItem infoMenuItem;
 
@@ -175,6 +180,23 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		infoDialog = new InfoDialog(controller);
 		errorDialog = new ErrorDialog(controller);
 
+		tfNDerivative = new JTextField();
+		tfNDerivative.setBounds(257, 254, 36, 20);
+		tfNDerivative.setName("tfNDerivative");
+		tfNDerivative.addKeyListener(controller);
+		tfNDerivative.addComponentListener(controller);
+		contentPane.add(tfNDerivative);
+
+		lblDerivative = new JLabel(". Ableitung");
+		lblDerivative.setBounds(294, 257, 72, 14);
+		contentPane.add(lblDerivative);
+
+		btnEnterDerivative = new JButton("Eintragen");
+		btnEnterDerivative.setBounds(257, 285, 89, 23);
+		btnEnterDerivative.setName("btnEnterDerivative");
+		btnEnterDerivative.addActionListener(controller);
+		contentPane.add(btnEnterDerivative);
+
 		graphPanelModel.addValueChangedListener(panel);
 		graphPanelModel.addValueChangedListener(this);
 	}
@@ -192,26 +214,42 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 			this.setEnabled(false);
 			infoDialog.setVisible(true);
 		}
-		
-		if(model.getShowErrorDialog()){
-		    this.setEnabled(false);
-		    errorDialog.setContent(model.getErrorDialogInfo());
-		    errorDialog.setVisible(true);
+
+		if (model.getShowErrorDialog()) {
+			this.setEnabled(false);
+			errorDialog.setContent(model.getErrorDialogInfo());
+			errorDialog.setVisible(true);
 		}
-		
+
 		if (!model.getShowErrorDialog() && !model.getShowInfoDialog()) {
 			infoDialog.setVisible(false);
 			errorDialog.setVisible(false);
-		    this.setEnabled(true);
-		    this.setVisible(true);
+			this.setEnabled(true);
+			this.setVisible(true);
 		}
-		
+
 		if (model.isInputAddedByButton()) {
 			tfFunctionInput.requestFocus();
 			model.setIsInputAddedByButton(false);
 		}
+		
+		if (model.isDerivativeAddedByButton()) {
+			tfNDerivative.requestFocus();
+			model.setIsDerivativeAddedByButton(false);
+		}
 
 		tfFunctionInput.setText(model.getFunctionInput());
+
+		if (model.getNDerivativeInput() > 0) {
+			tfNDerivative.setText(Integer.toString(model.getNDerivativeInput()));
+		} else {
+			tfNDerivative.setText("");
+		}
+
+		tfNDerivative.setVisible(list.getSelectedIndex() != -1 && model.getListModel().size() < 10);
+		lblDerivative.setVisible(list.getSelectedIndex() != -1 && model.getListModel().size() < 10);
+		btnEnterDerivative.setVisible(list.getSelectedIndex() != -1 && model.getListModel().size() < 10);
+		btnEnterDerivative.setEnabled(!(model.getNDerivativeInput() == 0));
 
 		btnInsert.setEnabled(!model.getFunctionInput().isBlank());
 		btnDelete.setEnabled(list.getSelectedIndex() != -1);
