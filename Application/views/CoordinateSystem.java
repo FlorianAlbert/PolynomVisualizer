@@ -8,18 +8,10 @@ import service.UnitLocation;
 
 public class CoordinateSystem {
 
-	private GraphPanelModel model;
+	private final GraphPanelModel model;
 
 	public CoordinateSystem(GraphPanelModel m) {
 		model = m;
-	}
-
-	public GraphPanelModel getModel() {
-		return model;
-	}
-
-	public void setModel(GraphPanelModel model) {
-		this.model = model;
 	}
 
 	public void paint(Graphics g) {

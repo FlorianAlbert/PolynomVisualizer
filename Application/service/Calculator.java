@@ -3,7 +3,7 @@ package service;
 public class Calculator {
 
 	private double[] factors;
-	private FunctionParser parser;
+	private final FunctionParser parser;
 
 	public Calculator() {
 		parser = new FunctionParser();

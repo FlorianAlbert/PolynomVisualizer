@@ -26,22 +26,22 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	private boolean valueSetByGraphPanel;
 
-	private ArrayList<String> functions = new ArrayList<>();
-	private Calculator calculator = new Calculator();
+	private final ArrayList<String> functions = new ArrayList<>();
+	private final Calculator calculator = new Calculator();
 
 	private Point mousePressingPoint;
 	private int cursorType;
 
-	private ArrayList<UnitLocation> unitPoints = new ArrayList<UnitLocation>();
+	private ArrayList<UnitLocation> unitPoints = new ArrayList<>();
 	private Path2D[] functionPaths = new Path2D[10];
 
 	private FontMetrics fontMetrics;
 
-	private Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK, Color.CYAN, Color.MAGENTA, Color.ORANGE,
+	private final Color[] colors = { Color.BLUE, Color.RED, Color.GREEN, Color.BLACK, Color.CYAN, Color.MAGENTA, Color.ORANGE,
 			Color.GRAY, Color.PINK, Color.YELLOW };
 
 	// Threadpool with 4 Mainpoolsize and 8 Maxpoolsize
-	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
+	ThreadPoolExecutor tPool = new ThreadPoolExecutor(4, 8, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(4));
 
 	public GraphPanelModel(double xMin, double xMax, double yMin, double yMax) {
 		setXYUnits(xMin, xMax, yMin, yMax);
@@ -163,14 +163,10 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		return unitPoints;
 	}
 
-	public FontMetrics getFontMetrics() {
-		return fontMetrics;
-	}
-
 	public void setFontMetrics(FontMetrics fontMetrics) {
 		this.fontMetrics = fontMetrics;
 
-		unitPoints = new ArrayList<UnitLocation>();
+		unitPoints = new ArrayList<>();
 
 		calculateXUnits();
 		calculateYUnits();
@@ -186,7 +182,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 
 	public Path2D[] evaluateFunctions(ArrayList<String> functions) {
 		Path2D[] functionPathsIntern = new Path2D[10];
-		double difference = (double) (xMax - xMin) / panelWidth;
+		double difference = (xMax - xMin) / panelWidth;
 		for (String function : functions) {
 			if (function != null) {
 				if (calculator.setTerm(function)) {
@@ -299,7 +295,7 @@ public class GraphPanelModel extends SuperModel implements Runnable {
 		int yneg = yToPixel(0) - 3;
 		int ypos = yToPixel(0) + 3;
 
-		int help = (int) ((yMax - yMin) / 6 + 1);
+		int help = (int) ((xMax - xMin) / 6 + 1);
 
 		for (int i = (int) (Math.floor(xMin) + 1); i < xMax; i++) {
 

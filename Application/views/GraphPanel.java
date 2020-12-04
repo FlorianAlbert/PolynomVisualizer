@@ -25,10 +25,8 @@ import service.ValueChangedListener;
 
 public class GraphPanel extends JPanel implements ValueChangedListener {
 
-	private static final long serialVersionUID = -4286522701957270175L;
-
-	private CoordinateSystem coordinateSystem;
-	private GraphPanelModel model;
+	private final CoordinateSystem coordinateSystem;
+	private final GraphPanelModel model;
 
 	public GraphPanel(GraphPanelModel model) {
 		Border border = getBorder();

@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import controller.MainFrameController;
-import model.MainFrameModel;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -17,20 +16,17 @@ import java.awt.Toolkit;
 
 public class InfoDialog extends JDialog {
 
-	private final JPanel contentPanel = new JPanel();
-	private MainFrameController controller;
-
 	/**
 	 * Create the dialog.
 	 */
 	public InfoDialog(MainFrameController controller) {
-		this.controller = controller;
-		
+
 		setTitle("\u00DCber PolyFunctionVisualizer");
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(InfoDialog.class.getResource("/views/ausruf.png")));
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
+		JPanel contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);

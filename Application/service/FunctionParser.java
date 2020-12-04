@@ -4,11 +4,21 @@ public class FunctionParser {
 
 	private double[] factors;
 
-	public static boolean checkTerm(String term) {
-		boolean termIsValid = term.matches(
-				"[+-]?\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^\\+?\\d+)?))|((?<=\\d)(([xX](\\^\\+?\\d+)?)?)))([+-]\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^\\+?\\d+)?))|((?<=\\d)(([xX](\\^\\+?\\d+)?)?))))*");
+	private boolean currentlyReadingFactor;
+	private boolean isFirstCharacter;
+	private boolean exponentIsZero;
 
-		return termIsValid;
+	private StringBuffer factorBuffer;
+	private StringBuffer exponentBuffer;
+
+	private boolean isExponent;
+
+	private int degree;
+
+	public static boolean checkTerm(String term) {
+
+		return term.matches(
+				"[+-]?\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^\\+?\\d+)?))|((?<=\\d)(([xX](\\^\\+?\\d+)?)?)))([+-]\\d*((?<=\\d)(\\.\\d+))?(((?<!\\d)([xX](\\^\\+?\\d+)?))|((?<=\\d)(([xX](\\^\\+?\\d+)?)?))))*");
 	}
 
 	public double[] parse(String term) {
@@ -18,13 +28,13 @@ public class FunctionParser {
 	}
 
 	private double[] analyseTerm(String term) {
-		boolean currentlyReadingFactor = true;
+		currentlyReadingFactor = true;
 		boolean signBelongsToFactor = true;
-		boolean isFirstCharacter = true;
-		boolean exponentIsZero = true;
+		isFirstCharacter = true;
+		exponentIsZero = true;
 
-		StringBuffer factorBuffer = new StringBuffer();
-		StringBuffer exponentBuffer = new StringBuffer();
+		factorBuffer = new StringBuffer();
+		exponentBuffer = new StringBuffer();
 
 		for (char character : term.toCharArray()) {
 			if (Character.isDigit(character) || character == '.') {
@@ -47,39 +57,10 @@ public class FunctionParser {
 
 			} else if (character == '-') {
 				if (signBelongsToFactor) {
-					if (isFirstCharacter) {
-						isFirstCharacter = false;
-						factorBuffer.append(character);
-					} else {
-						double factor;
-						if (factorBuffer.toString().isEmpty()) {
-							factor = 1;
-						} else if (factorBuffer.toString().equals("-")) {
-							factor = -1;
-						} else {
-							factor = Double.parseDouble(factorBuffer.toString());
-						}
-
-						int exponent;
-						if (!exponentBuffer.toString().isEmpty()) {
-							exponent = Integer.parseInt(exponentBuffer.toString());
-						} else {
-							if (exponentIsZero) {
-								exponent = 0;
-							} else {
-								exponent = 1;
-							}
-						}
-
-						factors[exponent] += factor;
-
-						exponentBuffer = new StringBuffer();
-						factorBuffer = new StringBuffer();
-						currentlyReadingFactor = true;
-						exponentIsZero = true;
-						factorBuffer.append(character);
-
-					}
+					
+					readFactorAndExponentIfNecessary();
+					
+					factorBuffer.append(character);
 
 				} else {
 					signBelongsToFactor = true;
@@ -88,37 +69,7 @@ public class FunctionParser {
 
 			} else if (character == '+') {
 				if (signBelongsToFactor) {
-					if (isFirstCharacter) {
-						isFirstCharacter = false;
-					} else {
-						double factor;
-						if (factorBuffer.toString().isEmpty()) {
-							factor = 1;
-						} else if (factorBuffer.toString().equals("-")) {
-							factor = -1;
-						} else {
-							factor = Double.parseDouble(factorBuffer.toString());
-						}
-
-						int exponent;
-						if (!exponentBuffer.toString().isEmpty()) {
-							exponent = Integer.parseInt(exponentBuffer.toString());
-						} else {
-							if (exponentIsZero) {
-								exponent = 0;
-							} else {
-								exponent = 1;
-							}
-						}
-
-						factors[exponent] += factor;
-
-						exponentBuffer = new StringBuffer();
-						factorBuffer = new StringBuffer();
-						currentlyReadingFactor = true;
-						exponentIsZero = true;
-
-					}
+					readFactorAndExponentIfNecessary();
 
 				} else {
 					signBelongsToFactor = true;
@@ -130,6 +81,12 @@ public class FunctionParser {
 			}
 		}
 
+		readFactorAndExponent();
+
+		return factors;
+	}
+
+	private void readFactorAndExponent() {
 		double factor;
 		if (factorBuffer.toString().isEmpty()) {
 			factor = 1;
@@ -151,17 +108,29 @@ public class FunctionParser {
 		}
 
 		factors[exponent] += factor;
+	}
 
-		return factors;
+	private void readFactorAndExponentIfNecessary() {
+		if (isFirstCharacter) {
+			isFirstCharacter = false;
+		} else {
+			readFactorAndExponent();
+
+			exponentBuffer = new StringBuffer();
+			factorBuffer = new StringBuffer();
+			currentlyReadingFactor = true;
+			exponentIsZero = true;
+
+		}
 	}
 
 	private int getDegreeOfTerm(String term) {
-		StringBuffer exponentBuffer = new StringBuffer();
-		boolean isExponent = false;
+		exponentBuffer = new StringBuffer();
+		isExponent = false;
 		boolean signBelongsToExponent = false;
-		boolean exponentIsZero = true;
+		exponentIsZero = true;
 
-		int degree = 0;
+		degree = 0;
 
 		for (char character : term.toCharArray()) {
 			if (Character.isDigit(character)) {
@@ -173,52 +142,32 @@ public class FunctionParser {
 				isExponent = true;
 				signBelongsToExponent = true;
 			} else if (character == '-') {
-				int comparingExponent;
-				if (exponentBuffer.toString().isEmpty()) {
-					if (exponentIsZero) {
-						comparingExponent = 0;
-					} else {
-						comparingExponent = 1;
-					}
-				} else {
-					comparingExponent = Integer.parseInt(exponentBuffer.toString());
-				}
-
-				if (comparingExponent > degree) {
-					degree = comparingExponent;
-				}
-
-				exponentBuffer = new StringBuffer();
-				isExponent = false;
-				exponentIsZero = true;
+				updateDegreeIfNecessaryWithResetOfVariables();
 			} else if (character == '+') {
 				if (signBelongsToExponent) {
 					signBelongsToExponent = false;
 				} else {
-					int comparingExponent;
-					if (exponentBuffer.toString().isEmpty()) {
-						if (exponentIsZero) {
-							comparingExponent = 0;
-						} else {
-							comparingExponent = 1;
-						}
-					} else {
-						comparingExponent = Integer.parseInt(exponentBuffer.toString());
-					}
-
-					if (comparingExponent > degree) {
-						degree = comparingExponent;
-					}
-
-					exponentBuffer = new StringBuffer();
-					isExponent = false;
-					exponentIsZero = true;
+					updateDegreeIfNecessaryWithResetOfVariables();
 				}
 			} else if (character == 'x' || character == 'X') {
 				exponentIsZero = false;
 			}
 		}
 
+		updateDegreeIfNecessary();
+
+		return degree;
+	}
+
+	private void updateDegreeIfNecessaryWithResetOfVariables() {
+		updateDegreeIfNecessary();
+
+		exponentBuffer = new StringBuffer();
+		isExponent = false;
+		exponentIsZero = true;
+	}
+
+	private void updateDegreeIfNecessary() {
 		int comparingExponent;
 		if (exponentBuffer.toString().isEmpty()) {
 			if (exponentIsZero) {
@@ -233,7 +182,5 @@ public class FunctionParser {
 		if (comparingExponent > degree) {
 			degree = comparingExponent;
 		}
-
-		return degree;
 	}
 }

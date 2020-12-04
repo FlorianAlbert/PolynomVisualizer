@@ -28,24 +28,12 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch (((Component) e.getSource()).getName()) {
-		case "Bestätigen":
-			model.addFunction(true);
-			break;
-		case "Entfernen":
-			model.removeFunction();
-			break;
-		case "infoMenuItem":
-			model.openInfoDialog();
-			break;
-		case "DialogOkButton":
-			model.closeInfoDialog();
-			break;
-		case "ErrorDialogOkButton":
-			model.closeErrorDialog();
-			break;
-		case "btnEnterDerivative":
-			model.addDerivative(true);
-
+			case "Bestätigen" -> model.addFunction(true);
+			case "Entfernen" -> model.removeFunction();
+			case "infoMenuItem" -> model.openInfoDialog();
+			case "DialogOkButton" -> model.closeInfoDialog();
+			case "ErrorDialogOkButton" -> model.closeErrorDialog();
+			case "btnEnterDerivative" -> model.addDerivative(true);
 		}
 	}
 
@@ -72,49 +60,38 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 	@Override
 	public void keyReleased(KeyEvent e) {
 		switch (((Component) e.getSource()).getName()) {
-		case "tfFunctionInput":
-			model.setFunctionInput(((JTextField) e.getSource()).getText());
-			break;
-		case "tfNDerivative":
-			model.setNDerivativeInput(((JTextField) e.getSource()).getText());
-			break;
-		default:
-			String input = ((JTextField) e.getSource()).getText();
-			if (input.matches("-?(\\d+(\\.\\d*)?)?")) {
-				if (input.matches("-?(\\d+\\.\\d+)?")) {
-					try {
-						switch (((JTextField) e.getSource()).getName()) {
-						case "tfXMin":
-							model.setXMin(Double.parseDouble(input));
-							break;
-						case "tfXMax":
-							model.setXMax(Double.parseDouble(input));
-							break;
-						case "tfYMin":
-							model.setYMin(Double.parseDouble(input));
-							break;
-						case "tfYMax":
-							model.setYMax(Double.parseDouble(input));
-							break;
-						}
-					} catch (NumberFormatException ex) {
-						System.out.println(ex.getMessage());
-					}
-				}
-			} else {
-				if (!(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)) {
-					int indexToDelete = ((JTextField) e.getSource()).getCaretPosition() - 1;
-					char[] result = new char[input.length() - 1];
-
-					for (int i = 0; i < input.length(); i++) {
-						if (i < indexToDelete) {
-							result[i] = input.toCharArray()[i];
-						} else if (i > indexToDelete) {
-							result[i - 1] = input.toCharArray()[i];
+			case "tfFunctionInput" -> model.setFunctionInput(((JTextField) e.getSource()).getText());
+			case "tfNDerivative" -> model.setNDerivativeInput(((JTextField) e.getSource()).getText());
+			default -> {
+				String input = ((JTextField) e.getSource()).getText();
+				if (input.matches("-?(\\d+(\\.\\d*)?)?")) {
+					if (input.matches("-?(\\d+(\\.\\d+)?)?")) {
+						try {
+							switch (((JTextField) e.getSource()).getName()) {
+								case "tfXMin" -> model.setXMin(Double.parseDouble(input));
+								case "tfXMax" -> model.setXMax(Double.parseDouble(input));
+								case "tfYMin" -> model.setYMin(Double.parseDouble(input));
+								case "tfYMax" -> model.setYMax(Double.parseDouble(input));
+							}
+						} catch (NumberFormatException ex) {
+							System.out.println(ex.getMessage());
 						}
 					}
+				} else {
+					if (!(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)) {
+						int indexToDelete = ((JTextField) e.getSource()).getCaretPosition() - 1;
+						char[] result = new char[input.length() - 1];
 
-					((JTextField) e.getSource()).setText(String.valueOf(result));
+						for (int i = 0; i < input.length(); i++) {
+							if (i < indexToDelete) {
+								result[i] = input.toCharArray()[i];
+							} else if (i > indexToDelete) {
+								result[i - 1] = input.toCharArray()[i];
+							}
+						}
+
+						((JTextField) e.getSource()).setText(String.valueOf(result));
+					}
 				}
 			}
 		}
@@ -122,19 +99,18 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		model.setSelectedListIndex(((JList<String>) e.getSource()).getSelectedIndex());
+		if (model.getSelectedListIndex() == e.getLastIndex() || e.getFirstIndex() == e.getLastIndex()) {
+			model.setSelectedListIndex(e.getFirstIndex());
+		} else if (model.getSelectedListIndex() == e.getFirstIndex()) {
+			model.setSelectedListIndex(e.getLastIndex());
+		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			switch (((JTextField) e.getSource()).getName()) {
-			case "tfXMin":
-			case "tfXMax":
-			case "tfYMin":
-			case "tfYMax":
-				((JTextField) e.getSource()).selectAll();
-				break;
+				case "tfXMin", "tfXMax", "tfYMin", "tfYMax" -> ((JTextField) e.getSource()).selectAll();
 			}
 		}
 	}

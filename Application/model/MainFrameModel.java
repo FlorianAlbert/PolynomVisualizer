@@ -20,9 +20,9 @@ public class MainFrameModel extends SuperModel {
 
 	private GraphPanelModel graphPanelModel;
 	
-	private Calculator calc = new Calculator();
+	private final Calculator calc = new Calculator();
 	
-	private HTMLEditorKit.Parser parser = new ParserDelegator();
+	private final HTMLEditorKit.Parser parser = new ParserDelegator();
 
 	private String functionInput = "";
 	
@@ -34,13 +34,11 @@ public class MainFrameModel extends SuperModel {
 
 	private int nDerivativeInput = 0;
 
-	private DefaultListModel<String> listModel = new DefaultListModel<>();
+	private final DefaultListModel<String> listModel = new DefaultListModel<>();
 
 	private boolean showInfoDialog;
 
 	private boolean showErrorDialog;
-
-	private boolean isInputFunctionChanged = false;
 
 	private boolean isInputAddedByButton;
 
@@ -81,7 +79,7 @@ public class MainFrameModel extends SuperModel {
 					if (actualEndIndex >= 0) {
 						functionInputView = functionInputView.concat("<sup>")
 								.concat(parts[i].substring(0, actualEndIndex)).concat("</sup>")
-								.concat(parts[i].substring(actualEndIndex, parts[i].length()));
+								.concat(parts[i].substring(actualEndIndex));
 					} else {
 						functionInputView = functionInputView.concat("<sup>").concat(parts[i]).concat("</sup>");
 					}
@@ -101,7 +99,6 @@ public class MainFrameModel extends SuperModel {
 			functionInput = "";
 		}
 
-		isInputFunctionChanged = true;
 		ValueChanged();
 	}
 
@@ -159,11 +156,6 @@ public class MainFrameModel extends SuperModel {
 		ValueChanged();
 	}
 
-	public void openErrorDialog() {
-		showErrorDialog = true;
-		ValueChanged();
-	}
-
 	public void closeErrorDialog() {
 		showErrorDialog = false;
 		ValueChanged();
@@ -214,6 +206,10 @@ public class MainFrameModel extends SuperModel {
 		ValueChanged();
 	}
 
+	public int getSelectedListIndex() {
+		return selectedListIndex;
+	}
+
 	public boolean isValueSetByGraphPanel() {
 		return graphPanelModel.isValueSetByGraphPanel();
 	}
@@ -228,14 +224,6 @@ public class MainFrameModel extends SuperModel {
 
 	public boolean getShowErrorDialog() {
 		return showErrorDialog;
-	}
-
-	public boolean isInputFunctionChanged() {
-		return isInputFunctionChanged;
-	}
-
-	public void setIsInputFunctionChanged(boolean isInputFunctionChanged) {
-		this.isInputFunctionChanged = isInputFunctionChanged;
 	}
 
 	public String getErrorDialogInfo() {
@@ -257,7 +245,7 @@ public class MainFrameModel extends SuperModel {
 			try {
 				nDerivativeInput = Integer.parseInt(text);
 			} catch (NumberFormatException ex) {
-
+				ex.printStackTrace();
 			}
 		}
 		ValueChanged();

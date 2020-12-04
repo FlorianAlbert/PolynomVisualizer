@@ -9,26 +9,23 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import controller.MainFrameController;
-import model.MainFrameModel;
 
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Toolkit;
 
 public class ErrorDialog extends JDialog {
-    private final JPanel contentPanel = new JPanel();
-	private MainFrameController controller;
 
 	JLabel lblError;
 	
 	public ErrorDialog(MainFrameController controller) {
-		this.controller = controller;
-		
+
 		setTitle("Fehler!");
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(InfoDialog.class.getResource("/views/ausruf.png")));
 		setBounds(200, 200, 400, 200);
 		getContentPane().setLayout(new BorderLayout());
+		JPanel contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);

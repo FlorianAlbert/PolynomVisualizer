@@ -2,7 +2,6 @@ package views;
 
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -10,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.html.parser.ParserDelegator;
 
 import controller.MainFrameController;
 import model.GraphPanelModel;
@@ -29,43 +27,35 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2853729456871453019L;
-	private MainFrameModel model;
-	private MainFrameController controller;
+	private final MainFrameModel model;
 
-	private JPanel contentPane;
+	private final JLabel lblDerivative;
 
-	private JLabel lblDerivative;
+	private final JTextField tfFunctionInput;
+	private final JTextField tfXMin;
+	private final JTextField tfXMax;
+	private final JTextField tfYMin;
+	private final JTextField tfYMax;
+	private final JTextField tfNDerivative;
 
-	private JTextField tfFunctionInput;
-	private JTextField tfXMin;
-	private JTextField tfXMax;
-	private JTextField tfYMin;
-	private JTextField tfYMax;
-	private JTextField tfNDerivative;
+	private final JButton btnDelete;
+	private final JButton btnInsert;
+	private final JButton btnEnterDerivative;
 
-	private JButton btnDelete;
-	private JButton btnInsert;
-	private JButton btnEnterDerivative;
+	private final JList<String> list;
 
-	private JList<String> list;
-	private JMenu helpMenu;
-	private JMenuItem infoMenuItem;
-
-	private InfoDialog infoDialog;
-	private ErrorDialog errorDialog;
+	private final InfoDialog infoDialog;
+	private final ErrorDialog errorDialog;
 
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainFrameModel model = new MainFrameModel();
-					MainFrame frame = new MainFrame("PolyFunctionVisualizer", model);
-					model.addValueChangedListener(frame);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				MainFrameModel model = new MainFrameModel();
+				MainFrame frame = new MainFrame("PolyFunctionVisualizer", model);
+				model.addValueChangedListener(frame);
+				frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 
@@ -74,7 +64,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 	public MainFrame(String title, MainFrameModel model) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/views/funktion.png")));
 		this.model = model;
-		controller = new MainFrameController(model);
+		MainFrameController controller = new MainFrameController(model);
 
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,15 +75,15 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		menuBar.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		setJMenuBar(menuBar);
 
-		helpMenu = new JMenu("Hilfe");
+		JMenu helpMenu = new JMenu("Hilfe");
 		menuBar.add(helpMenu);
 
-		infoMenuItem = new JMenuItem("Info");
+		JMenuItem infoMenuItem = new JMenuItem("Info");
 		infoMenuItem.setName("infoMenuItem");
 		infoMenuItem.addActionListener(controller);
 		helpMenu.add(infoMenuItem);
 
-		contentPane = new JPanel();
+		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -123,7 +113,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 		btnDelete.addActionListener(controller);
 		contentPane.add(btnDelete);
 
-		list = new JList<String>(model.getListModel());
+		list = new JList<>(model.getListModel());
 		list.setBounds(10, 11, 237, 329);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.addListSelectionListener(controller);
