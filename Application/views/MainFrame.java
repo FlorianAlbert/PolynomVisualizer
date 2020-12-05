@@ -62,7 +62,7 @@ public class MainFrame extends JFrame implements ValueChangedListener {
 	}
 
 	public MainFrame(String title, MainFrameModel model) {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/views/funktion.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("images/funktion.png"));
 		this.model = model;
 		MainFrameController controller = new MainFrameController(model);
 

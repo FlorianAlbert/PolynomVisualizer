@@ -99,11 +99,7 @@ public class MainFrameController implements ActionListener, KeyListener, ListSel
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if (model.getSelectedListIndex() == e.getLastIndex() || e.getFirstIndex() == e.getLastIndex()) {
-			model.setSelectedListIndex(e.getFirstIndex());
-		} else if (model.getSelectedListIndex() == e.getFirstIndex()) {
-			model.setSelectedListIndex(e.getLastIndex());
-		}
+		model.setSelectedListIndex(((JList) e.getSource()).getSelectedIndex());
 	}
 
 	@Override

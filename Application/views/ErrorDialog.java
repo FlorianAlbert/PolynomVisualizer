@@ -22,7 +22,7 @@ public class ErrorDialog extends JDialog {
 
 		setTitle("Fehler!");
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(InfoDialog.class.getResource("/views/ausruf.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("images/ausruf.png"));
 		setBounds(200, 200, 400, 200);
 		getContentPane().setLayout(new BorderLayout());
 		JPanel contentPanel = new JPanel();

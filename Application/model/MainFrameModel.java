@@ -9,7 +9,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
-import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTML.Tag;
 
 import service.Calculator;
@@ -59,7 +58,7 @@ public class MainFrameModel extends SuperModel {
 				Color currentColor = graphPanelModel.getColors()[listModel.getSize()];
 				String[] parts = functionInput.split("\\^");
 				String functionInputView = "<html><body style=\"color: rgb(" + currentColor.getRed() + ", "
-						+ currentColor.getGreen() + ", " + currentColor.getBlue() + ");\">f(x) = " + parts[0];
+						+ currentColor.getGreen() + ", " + currentColor.getBlue() + ");\">f<sub>" + (listModel.getSize() + 1) + "</sub>(x) = " + parts[0];
 				for (int i = 1; i < parts.length; i++) {
 					int endIndexPlus;
 					if (parts[i].startsWith("+")) {
@@ -111,9 +110,12 @@ public class MainFrameModel extends SuperModel {
 			String entry = listModel.get(i);
 			listModel.remove(i);
 			String oldRGB = entry.substring(entry.indexOf("("), entry.indexOf(")") + 1);
+			String oldNumber = entry.substring(entry.indexOf("<sub>"), entry.indexOf("</sub>") + 6);
 			Color newColor = graphPanelModel.getColors()[i];
 			String newRGB = "(" + newColor.getRed() + ", " + newColor.getGreen() + ", " + newColor.getBlue() + ")";
+			String newNumber = "<sub>" + (i + 1) + "</sub>";
 			entry = entry.replace(oldRGB, newRGB);
+			entry = entry.replace(oldNumber, newNumber);
 			listModel.add(i, entry);
 		}
 
@@ -206,10 +208,6 @@ public class MainFrameModel extends SuperModel {
 		ValueChanged();
 	}
 
-	public int getSelectedListIndex() {
-		return selectedListIndex;
-	}
-
 	public boolean isValueSetByGraphPanel() {
 		return graphPanelModel.isValueSetByGraphPanel();
 	}
@@ -258,10 +256,11 @@ public class MainFrameModel extends SuperModel {
 	private class HTMLFunctionParser extends HTMLEditorKit.ParserCallback {
 		private boolean encounteredAFunction = false;
 		private boolean encounteredAnExponent = false;
+		private boolean isSubNumber = false;
 		
 		@Override
 		public void handleText(char[] data, int pos) {
-			if (encounteredAFunction) {
+			if (encounteredAFunction && !isSubNumber) {
 				if (encounteredAnExponent) {
 					functionBuffer = functionBuffer.concat("^");
 				}
@@ -271,23 +270,31 @@ public class MainFrameModel extends SuperModel {
 		
 		@Override
 		public void handleStartTag(Tag t, MutableAttributeSet a, int pos) {
-			if (t == HTML.Tag.BODY) {
+			if (t == Tag.BODY) {
 				encounteredAFunction = true;
 			}
 			
-			if (t == HTML.Tag.SUP) {
+			if (t == Tag.SUP) {
 				encounteredAnExponent = true;
+			}
+
+			if (t == Tag.SUB) {
+				isSubNumber = true;
 			}
 		}
 		
 		@Override
 		public void handleEndTag(Tag t, int pos) {
-			if (t == HTML.Tag.BODY) {
+			if (t == Tag.BODY) {
 				encounteredAFunction = false;
 			}
 			
-			if (t == HTML.Tag.SUP) {
+			if (t == Tag.SUP) {
 				encounteredAnExponent = false;
+			}
+
+			if (t == Tag.SUB) {
+				isSubNumber = false;
 			}
 		}
 	}
